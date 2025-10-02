@@ -1,0 +1,15 @@
+target/
+node_modules/
+dist/
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+main.py
+boost_commits.py
+__pycache__/

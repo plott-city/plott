@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "programs/stalkr_core",
+    "libs/stalkr_math",
+    "cli",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.4.2"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/stalkr-labs/stalkr"

@@ -29,3 +29,5 @@ describe("StalkrClient", () => {
 // add correlation coefficient calculator
 
 // update changelog for v0.4.2
+
+// add end-to-end prediction flow test

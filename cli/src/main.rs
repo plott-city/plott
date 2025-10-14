@@ -222,3 +222,5 @@ fn main() {
 // add distribution helper tests
 
 // handle wallet address validation
+
+// add verbose output flag

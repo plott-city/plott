@@ -224,3 +224,5 @@ fn main() {
 // handle wallet address validation
 
 // add verbose output flag
+
+// handle empty prediction response

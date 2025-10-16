@@ -241,3 +241,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 **$STALKR**
 
 </div>
+<!-- write architecture overview [1.2] -->

@@ -21,3 +21,4 @@ Thank you for your interest in contributing.
 - Write tests for new functionality
 - Ensure all existing tests pass
 - Submit a pull request with a clear description
+<!-- set workspace resolver to v2 [1.3] -->

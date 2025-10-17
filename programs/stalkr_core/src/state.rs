@@ -55,3 +55,5 @@ impl Prediction {
 }
 
 // implement sequence pair detection
+
+// add trigger condition evaluator

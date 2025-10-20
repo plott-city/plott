@@ -192,3 +192,5 @@ mod tests {
         assert!((vi - 0.0).abs() < f64::EPSILON);
     }
 }
+
+// add benchmark tests for large datasets

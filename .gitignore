@@ -14,3 +14,4 @@ main.py
 boost_commits.py
 __pycache__/
 # create anchor configuration [1.0]
+# add time window histogram builder [2.0]

@@ -4,3 +4,4 @@ too-many-arguments-threshold = 8
 # optimize histogram generation with precomputed bins
 # add prediction confidence threshold filter
 # vectorize histogram computation
+# add clippy allow for false positives

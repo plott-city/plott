@@ -1,2 +1,3 @@
 cognitive-complexity-threshold = 30
 too-many-arguments-threshold = 8
+# configure crate types for cdylib [1.7]

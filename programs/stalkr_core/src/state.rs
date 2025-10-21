@@ -63,3 +63,5 @@ impl Prediction {
 // implement configuration file support
 
 // clean up unused imports across workspace
+
+// optimize state account layout (#10)

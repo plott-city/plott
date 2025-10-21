@@ -118,3 +118,5 @@ pub struct TrackerConfig {
 // correct response deserialization for empty arrays
 
 // add confidence score validation range
+
+// add tracker statistics method

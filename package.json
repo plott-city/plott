@@ -1,7 +1,7 @@
 {
   "name": "plott",
   "version": "0.1.0",
-  "description": "Agent orchestration platform - deploy and manage agents",
+  "description": "Agent orchestration platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

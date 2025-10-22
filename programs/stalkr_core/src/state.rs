@@ -57,3 +57,5 @@ impl Prediction {
 // implement sequence pair detection
 
 // add trigger condition evaluator
+
+// implement cex withdrawal delay tracker

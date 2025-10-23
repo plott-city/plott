@@ -12,3 +12,4 @@ edition = "2021"
 license = "MIT"
 repository = "https://github.com/stalkr-labs/stalkr"
 # add program id constants [1.4]
+# extract pattern weights into constants [2.4]

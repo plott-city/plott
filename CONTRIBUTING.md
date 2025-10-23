@@ -22,3 +22,4 @@ Thank you for your interest in contributing.
 - Ensure all existing tests pass
 - Submit a pull request with a clear description
 <!-- set workspace resolver to v2 [1.3] -->
+<!-- implement pattern score aggregation [2.3] -->

@@ -103,3 +103,5 @@ export class StalkrClient {
 // resolve remaining compiler warnings
 
 // correct exit code on prediction fetch failure
+
+// add whale tier filter to predictions

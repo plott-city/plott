@@ -11,3 +11,4 @@ version = "0.4.2"
 edition = "2021"
 license = "MIT"
 repository = "https://github.com/stalkr-labs/stalkr"
+# add conditional probability for sequence pairs

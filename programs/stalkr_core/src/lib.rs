@@ -114,3 +114,5 @@ pub struct TrackerConfig {
     pub trigger_weight: u8,
     pub confidence_threshold: u8,
 }
+
+// fix histogram bin alignment for utc hours [2.9]

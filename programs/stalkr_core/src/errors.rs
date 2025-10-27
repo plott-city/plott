@@ -17,3 +17,5 @@ pub enum StalkrError {
     #[msg("Arithmetic overflow")]
     Overflow,
 }
+
+// add time window pattern tests

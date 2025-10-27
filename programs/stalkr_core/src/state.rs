@@ -53,3 +53,5 @@ pub struct Prediction {
 impl Prediction {
     pub const LEN: usize = 32 + 32 + 1 + 1 + 2 + 1 + 8 + 1 + 1 + 8 + 1 + 4;
 }
+
+// implement prediction window estimation [2.10]

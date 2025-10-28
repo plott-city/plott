@@ -17,3 +17,5 @@ pub enum StalkrError {
     #[msg("Arithmetic overflow")]
     Overflow,
 }
+
+// separate pattern types into own module [2.11]

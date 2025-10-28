@@ -1,3 +1,4 @@
 cognitive-complexity-threshold = 30
 too-many-arguments-threshold = 8
 # implement pattern score aggregation
+# optimize histogram generation with precomputed bins

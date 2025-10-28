@@ -266,3 +266,5 @@ Configure automatic pre-emptive buying based on prediction signals.
   "slippageBps": 300
 }
 ```
+
+<!-- updated -->

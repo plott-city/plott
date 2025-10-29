@@ -6,6 +6,12 @@ const envSchema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
+  DATABASE_URL: z.string().default("postgresql://localhost:5432/plott"),
+  REDIS_URL: z.string().default("redis://localhost:6379"),
+  CORS_ORIGINS: z
+    .string()
+    .default("http://localhost:3000")
+    .transform((s) => s.split(",")),
 });
 
 const parsed = envSchema.safeParse(process.env);

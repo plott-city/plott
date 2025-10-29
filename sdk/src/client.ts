@@ -105,3 +105,5 @@ export class StalkrClient {
 // correct exit code on prediction fetch failure
 
 // add whale tier filter to predictions
+
+// add retry logic for failed requests

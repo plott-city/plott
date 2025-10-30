@@ -86,3 +86,5 @@ pub struct ResolvePrediction<'info> {
     pub whale: Account<'info, Whale>,
     pub authority: Signer<'info>,
 }
+
+// optimize histogram generation with precomputed bins [2.14]

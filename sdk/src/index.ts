@@ -19,3 +19,5 @@ export type {
 // optimize data fetching with parallel requests
 
 // extract magic numbers to named constants
+
+// correct type export for pattern analysis

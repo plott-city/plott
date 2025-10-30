@@ -19,3 +19,4 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
+# add time window pattern tests [2.13]

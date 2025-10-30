@@ -226,3 +226,5 @@ fn main() {
 // add verbose output flag
 
 // handle empty prediction response
+
+// add export to csv functionality

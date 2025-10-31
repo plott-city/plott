@@ -19,3 +19,5 @@ pub enum StalkrError {
 }
 
 // add time window pattern tests
+
+// implement multi-pattern cross matching

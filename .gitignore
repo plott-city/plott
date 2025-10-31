@@ -15,3 +15,4 @@ boost_commits.py
 __pycache__/
 # create anchor configuration [1.0]
 # add time window histogram builder [2.0]
+# add active trigger count aggregation [2.15]

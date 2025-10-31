@@ -1,28 +1,39 @@
 {
   "name": "plott",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent orchestration platform",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "lint": "eslint src/",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "keywords": [
     "agents",
-    "orchestration"
+    "orchestration",
+    "pipelines"
   ],
   "author": "plott-city",
   "license": "MIT",
   "dependencies": {
     "hono": "^4.3.0",
     "@hono/node-server": "^1.11.0",
+    "drizzle-orm": "^0.30.0",
+    "postgres": "^3.4.0",
     "zod": "^3.23.0",
+    "pino": "^9.1.0",
+    "pino-pretty": "^11.1.0",
+    "nanoid": "^5.0.0",
     "dotenv": "^16.4.0"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
     "tsx": "^4.10.0",
-    "@types/node": "^20.12.0"
+    "@types/node": "^20.12.0",
+    "eslint": "^9.3.0",
+    "drizzle-kit": "^0.21.0"
   }
 }

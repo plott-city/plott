@@ -243,3 +243,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 </div>
 <!-- write architecture overview [1.2] -->
 <!-- add trigger condition evaluator [2.2] -->
+<!-- implement multi-pattern cross matching [2.17] -->

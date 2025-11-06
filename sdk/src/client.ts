@@ -107,3 +107,5 @@ export class StalkrClient {
 // add whale tier filter to predictions
 
 // add retry logic for failed requests
+
+// add pagination support for history

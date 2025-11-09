@@ -163,3 +163,5 @@ cargo run --bin stalkr-cli -- analyze <WALLET_ADDRESS>
 **$STALKR**
 
 </div>
+
+<!-- updated -->

@@ -2,3 +2,4 @@ cognitive-complexity-threshold = 30
 too-many-arguments-threshold = 8
 # configure crate types for cdylib [1.7]
 # add unit tests for funding source pattern [2.7]
+# fix standard deviation calculation [2.22]

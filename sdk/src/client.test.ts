@@ -31,3 +31,5 @@ describe("StalkrClient", () => {
 // update changelog for v0.4.2
 
 // add end-to-end prediction flow test
+
+// reorganize test file structure

@@ -65,3 +65,5 @@ impl Prediction {
 // clean up unused imports across workspace
 
 // optimize state account layout (#10)
+
+// add prediction resolution timestamp

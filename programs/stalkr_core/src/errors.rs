@@ -19,3 +19,5 @@ pub enum StalkrError {
 }
 
 // separate pattern types into own module [2.11]
+
+// add record prediction instruction [2.26]

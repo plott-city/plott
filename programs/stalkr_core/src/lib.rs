@@ -120,3 +120,5 @@ pub struct TrackerConfig {
 // add confidence score validation range
 
 // add tracker statistics method
+
+// apply consistent brace style across core

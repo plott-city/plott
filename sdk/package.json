@@ -26,3 +26,4 @@
   }
 }
 # add conditional probability for sequence pairs [2.12]
+# implement resolve prediction with accuracy tracking [2.27]

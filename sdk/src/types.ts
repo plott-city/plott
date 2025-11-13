@@ -104,3 +104,5 @@ export interface ApiResponse<T> {
   error: string | null;
   timestamp: string;
 }
+
+// consolidate api client configuration

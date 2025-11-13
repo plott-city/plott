@@ -20,3 +20,4 @@
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }
 # add time window pattern tests [2.13]
+# add checked arithmetic for overflow safety [2.28]

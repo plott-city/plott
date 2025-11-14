@@ -88,3 +88,5 @@ pub struct ResolvePrediction<'info> {
 }
 
 // optimize histogram generation with precomputed bins [2.14]
+
+// wire up pda seeds for whale accounts [2.29]

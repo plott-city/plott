@@ -194,3 +194,5 @@ mod tests {
 }
 
 // add benchmark tests for large datasets
+
+// correct bin boundary in histogram edge (#4)

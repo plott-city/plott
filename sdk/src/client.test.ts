@@ -21,3 +21,5 @@ describe("StalkrClient", () => {
     expect(c).toBeDefined();
   });
 });
+
+// implement confidence score formatter

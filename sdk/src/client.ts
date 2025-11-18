@@ -95,3 +95,5 @@ export class StalkrClient {
     );
   }
 }
+
+// add webhook event type definitions

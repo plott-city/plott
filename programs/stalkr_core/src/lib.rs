@@ -122,3 +122,5 @@ pub struct TrackerConfig {
 // add tracker statistics method
 
 // apply consistent brace style across core
+
+// add overflow protection tests

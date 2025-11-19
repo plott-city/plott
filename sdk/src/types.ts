@@ -106,3 +106,5 @@ export interface ApiResponse<T> {
 }
 
 // consolidate api client configuration
+
+// extract common request helpers

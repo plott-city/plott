@@ -45,6 +45,7 @@ pipelineRouter.put("/:id/trigger", async (c) => {
   const id = c.req.param("id");
   const pipeline = await engine.getPipeline(id);
   if (!pipeline) return c.json({ error: "Pipeline not found" }, 404);
+  // Trigger and track the pipeline run
   const run = await engine.triggerPipeline(id);
   return c.json({ run });
 });

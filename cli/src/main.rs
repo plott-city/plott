@@ -228,3 +228,5 @@ fn main() {
 // handle empty prediction response
 
 // add export to csv functionality
+
+// add shell completion generation

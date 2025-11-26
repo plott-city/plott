@@ -196,3 +196,5 @@ mod tests {
 // add benchmark tests for large datasets
 
 // correct bin boundary in histogram edge (#4)
+
+// add negative value tests for z-score

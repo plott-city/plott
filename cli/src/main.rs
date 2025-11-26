@@ -230,3 +230,5 @@ fn main() {
 // add export to csv functionality
 
 // add shell completion generation
+
+// add watch mode for continuous updates (#56)

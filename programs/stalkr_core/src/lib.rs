@@ -124,3 +124,5 @@ pub struct TrackerConfig {
 // apply consistent brace style across core
 
 // add overflow protection tests
+
+// validate tier bounds before registration

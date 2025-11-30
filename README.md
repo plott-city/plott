@@ -245,3 +245,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 <!-- add trigger condition evaluator [2.2] -->
 <!-- implement multi-pattern cross matching [2.17] -->
 <!-- add window hours validation 1-168 [2.32] -->
+<!-- consolidate api client configuration [3.2] -->

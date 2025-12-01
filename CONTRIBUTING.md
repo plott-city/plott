@@ -24,3 +24,4 @@ Thank you for your interest in contributing.
 <!-- set workspace resolver to v2 [1.3] -->
 <!-- implement pattern score aggregation [2.3] -->
 <!-- add sequence pattern unit tests [2.18] -->
+<!-- handle null pattern fields gracefully [3.3] -->

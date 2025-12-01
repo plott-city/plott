@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { logger } from "../utils/logger";
-import type { Agent, CreateAgentInput } from "../types/agent";
+import type { Agent, AgentStatus, CreateAgentInput } from "../types/agent";
 
 export class AgentRegistry {
   private agents: Map<string, Agent> = new Map();
@@ -23,6 +23,13 @@ export class AgentRegistry {
       type: input.type,
       status: "idle",
       config: input.config || {},
+      description: input.description || "",
+      metrics: {
+        totalRuns: 0,
+        successRate: 0,
+        avgDurationMs: 0,
+        lastRunAt: null,
+      },
       createdAt: now,
       updatedAt: now,
     };
@@ -52,5 +59,12 @@ export class AgentRegistry {
     const existed = this.agents.delete(id);
     if (!existed) throw new Error(`Agent ${id} not found`);
     logger.info({ agentId: id }, "Agent deleted");
+  }
+
+  async updateStatus(id: string, status: AgentStatus): Promise<void> {
+    const agent = this.agents.get(id);
+    if (!agent) throw new Error(`Agent ${id} not found`);
+    agent.status = status;
+    agent.updatedAt = new Date().toISOString();
   }
 }

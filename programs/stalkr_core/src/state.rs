@@ -67,3 +67,5 @@ impl Prediction {
 // optimize state account layout (#10)
 
 // add prediction resolution timestamp
+
+// add whale portfolio valuation method

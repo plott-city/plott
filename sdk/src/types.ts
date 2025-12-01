@@ -112,3 +112,5 @@ export interface ApiResponse<T> {
 // extract output formatting module
 
 // align type definition formatting
+
+// use const enum for prediction actions

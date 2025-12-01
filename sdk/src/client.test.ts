@@ -23,3 +23,5 @@ describe("StalkrClient", () => {
 });
 
 // implement confidence score formatter
+
+// add pattern analysis output formatter

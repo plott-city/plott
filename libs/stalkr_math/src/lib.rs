@@ -198,3 +198,5 @@ mod tests {
 // correct bin boundary in histogram edge (#4)
 
 // add negative value tests for z-score
+
+// add weighted mean calculation

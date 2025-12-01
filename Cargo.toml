@@ -14,3 +14,4 @@ repository = "https://github.com/stalkr-labs/stalkr"
 # add conditional probability for sequence pairs
 # correct standard deviation calculation
 # correct timestamp parsing for iso format
+# add workspace-level test script

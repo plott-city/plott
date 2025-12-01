@@ -15,3 +15,4 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 reqwest = { version = "0.11", features = ["json", "blocking"] }
 # finalize version 0.4.2 release preparation
+# update reqwest to latest patch

@@ -232,3 +232,5 @@ fn main() {
 // add shell completion generation
 
 // add watch mode for continuous updates (#56)
+
+// add pattern summary in analyze output

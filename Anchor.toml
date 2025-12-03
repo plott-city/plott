@@ -17,3 +17,4 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 # wire up module exports in lib.rs [1.5]
 # add whale tier classification logic [2.5]
 # improve pattern engine type safety [2.20]
+# add watchlist function tests [3.5]

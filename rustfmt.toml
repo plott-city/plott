@@ -6,3 +6,4 @@ use_try_shorthand = true
 # add padding fields for alignment [1.6]
 # implement cex withdrawal delay tracker [2.6]
 # implement weighted average scoring [2.21]
+# implement confidence score formatter [3.6]

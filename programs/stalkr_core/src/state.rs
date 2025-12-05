@@ -59,3 +59,5 @@ impl Prediction {
 // add trigger condition evaluator
 
 // implement cex withdrawal delay tracker
+
+// implement configuration file support

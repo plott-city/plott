@@ -200,3 +200,5 @@ mod tests {
 // add negative value tests for z-score
 
 // add weighted mean calculation
+
+// guard against division by zero in volatility

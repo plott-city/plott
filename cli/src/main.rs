@@ -234,3 +234,5 @@ fn main() {
 // add watch mode for continuous updates (#56)
 
 // add pattern summary in analyze output
+
+// improve error message formatting

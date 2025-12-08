@@ -13,3 +13,5 @@ export type {
   WatchlistItem,
   ApiResponse,
 } from "./types";
+
+// implement prediction history export

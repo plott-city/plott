@@ -69,3 +69,5 @@ impl Prediction {
 // add prediction resolution timestamp
 
 // add whale portfolio valuation method
+
+// rename prediction fields for clarity

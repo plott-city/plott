@@ -15,3 +15,5 @@ export type {
 } from "./types";
 
 // implement prediction history export
+
+// optimize data fetching with parallel requests

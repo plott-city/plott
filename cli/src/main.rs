@@ -218,3 +218,5 @@ fn main() {
 }
 
 // correct argument parsing for wallet addresses
+
+// add distribution helper tests

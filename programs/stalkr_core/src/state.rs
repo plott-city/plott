@@ -57,3 +57,5 @@ impl Prediction {
 // implement prediction window estimation [2.10]
 
 // implement whale registration with tier validation [2.25]
+
+// add batch wallet analysis function [3.10]

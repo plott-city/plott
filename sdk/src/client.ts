@@ -109,3 +109,5 @@ export class StalkrClient {
 // add retry logic for failed requests
 
 // add pagination support for history
+
+// handle network timeout in batch requests

@@ -5,3 +5,4 @@ module.exports = {
   testMatch: ["**/*.test.ts"],
   moduleFileExtensions: ["ts", "js", "json"],
 };
+# add abort controller for request timeouts [3.15]

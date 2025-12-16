@@ -21,3 +21,5 @@ describe("StalkrClient", () => {
     expect(c).toBeDefined();
   });
 });
+
+// add api response envelope type [3.19]

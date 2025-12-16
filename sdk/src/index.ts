@@ -13,3 +13,5 @@ export type {
   WatchlistItem,
   ApiResponse,
 } from "./types";
+
+// implement POST method for watchlist add [3.16]

@@ -95,3 +95,5 @@ export class StalkrClient {
     );
   }
 }
+
+// define prediction matched patterns interface [3.18]

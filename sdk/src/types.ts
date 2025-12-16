@@ -104,3 +104,5 @@ export interface ApiResponse<T> {
   error: string | null;
   timestamp: string;
 }
+
+// add whale profile type with all pattern fields [3.17]

@@ -114,3 +114,5 @@ export interface ApiResponse<T> {
 // align type definition formatting
 
 // use const enum for prediction actions
+
+// add type narrowing for prediction actions

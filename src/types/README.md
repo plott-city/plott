@@ -1,3 +1,3 @@
 # Types
 
-TypeScript type definitions for agents and shared interfaces.
+TypeScript type definitions for agents, pipelines, and shared interfaces.

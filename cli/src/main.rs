@@ -236,3 +236,5 @@ fn main() {
 // add pattern summary in analyze output
 
 // improve error message formatting
+
+// improve subcommand help text

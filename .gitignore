@@ -18,3 +18,4 @@ __pycache__/
 # add active trigger count aggregation [2.15]
 # add prediction pda with counter seed [2.30]
 # implement response type guards [3.0]
+# implement prediction feed display [4.0]

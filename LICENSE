@@ -24,3 +24,4 @@ SOFTWARE.
 # handle edge case for wallets with no cex history [2.16]
 # validate confidence range 50-99 [2.31]
 # add tier classification utility [3.1]
+# add pattern analysis output formatter [4.1]

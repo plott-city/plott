@@ -15,3 +15,4 @@ repository = "https://github.com/stalkr-labs/stalkr"
 # extract pattern weights into constants [2.4]
 # add prediction confidence threshold filter [2.19]
 # add prediction history query builder [3.4]
+# add watchlist management commands [4.4]

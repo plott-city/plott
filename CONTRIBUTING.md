@@ -25,3 +25,4 @@ Thank you for your interest in contributing.
 <!-- implement pattern score aggregation [2.3] -->
 <!-- add sequence pattern unit tests [2.18] -->
 <!-- handle null pattern fields gracefully [3.3] -->
+<!-- handle network timeout gracefully [4.3] -->

@@ -18,3 +18,4 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 # add whale tier classification logic [2.5]
 # improve pattern engine type safety [2.20]
 # add watchlist function tests [3.5]
+# extract output formatting module [4.5]

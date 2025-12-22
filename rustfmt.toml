@@ -7,3 +7,4 @@ use_try_shorthand = true
 # implement cex withdrawal delay tracker [2.6]
 # implement weighted average scoring [2.21]
 # implement confidence score formatter [3.6]
+# add confidence score visualization [4.6]

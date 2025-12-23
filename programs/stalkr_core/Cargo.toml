@@ -18,3 +18,4 @@ solana-program = "=1.17.0"
 # add confidence score calculation [2.8]
 # add trigger pattern tests [2.23]
 # extract common request helpers [3.8]
+# fix argument parsing for wallet addresses [4.8]

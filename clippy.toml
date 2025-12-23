@@ -4,3 +4,4 @@ too-many-arguments-threshold = 8
 # add unit tests for funding source pattern [2.7]
 # fix standard deviation calculation [2.22]
 # add webhook event type definitions [3.7]
+# implement configuration file support [4.7]

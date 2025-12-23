@@ -202,3 +202,5 @@ mod tests {
 // add weighted mean calculation
 
 // guard against division by zero in volatility
+
+// correct rounding in percentile rank

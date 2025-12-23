@@ -17,3 +17,4 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 # add base type definitions
 # implement prediction window estimation
 # add prediction history query builder
+# bump version to 0.4.0

@@ -126,3 +126,5 @@ pub struct TrackerConfig {
 // add overflow protection tests
 
 // validate tier bounds before registration
+
+// remove trailing whitespace across project

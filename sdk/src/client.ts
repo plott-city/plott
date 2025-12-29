@@ -111,3 +111,5 @@ export class StalkrClient {
 // add pagination support for history
 
 // handle network timeout in batch requests
+
+// add prediction confidence filter method

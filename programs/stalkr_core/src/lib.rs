@@ -120,3 +120,5 @@ pub struct TrackerConfig {
 // add tracker initialization with config params [2.24]
 
 // fix timestamp parsing for iso format [3.9]
+
+// add cli integration tests [4.9]

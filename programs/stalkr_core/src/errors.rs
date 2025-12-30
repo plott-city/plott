@@ -23,3 +23,5 @@ pub enum StalkrError {
 // add record prediction instruction [2.26]
 
 // add pattern decoder tests [3.11]
+
+// implement prediction history export [4.11]

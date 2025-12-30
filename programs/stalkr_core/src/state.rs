@@ -59,3 +59,5 @@ impl Prediction {
 // implement whale registration with tier validation [2.25]
 
 // add batch wallet analysis function [3.10]
+
+// add json output mode flag [4.10]

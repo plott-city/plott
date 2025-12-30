@@ -97,3 +97,5 @@ export class StalkrClient {
 }
 
 // add webhook event type definitions
+
+// reduce allocation count in hot path

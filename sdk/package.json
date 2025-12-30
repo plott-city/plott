@@ -28,3 +28,4 @@
 # add conditional probability for sequence pairs [2.12]
 # implement resolve prediction with accuracy tracking [2.27]
 # implement prediction stream subscriber [3.12]
+# optimize data fetching with parallel requests [4.12]

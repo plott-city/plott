@@ -238,3 +238,5 @@ fn main() {
 // improve error message formatting
 
 // improve subcommand help text
+
+// correct output alignment in table mode

@@ -6,3 +6,4 @@ module.exports = {
   moduleFileExtensions: ["ts", "js", "json"],
 };
 # add abort controller for request timeouts [3.15]
+# add pattern result display formatting [4.15]

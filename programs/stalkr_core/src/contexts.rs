@@ -92,3 +92,5 @@ pub struct ResolvePrediction<'info> {
 // wire up pda seeds for whale accounts [2.29]
 
 // add error handling with typed exceptions [3.14]
+
+// implement api response deserialization [4.14]

@@ -27,3 +27,5 @@ describe("StalkrClient", () => {
 // add pattern analysis output formatter
 
 // add correlation coefficient calculator
+
+// update changelog for v0.4.2

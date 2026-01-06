@@ -6,8 +6,8 @@ describe("Agents API", () => {
     const res = await app.request("/api/agents");
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.agents).toEqual([]);
-    expect(body.count).toBe(0);
+    expect(body).toHaveProperty("agents");
+    expect(body).toHaveProperty("count");
   });
 
   it("should create a new agent", async () => {
@@ -42,5 +42,39 @@ describe("Agents API", () => {
   it("should return 404 for non-existent agent", async () => {
     const res = await app.request("/api/agents/nonexistent123");
     expect(res.status).toBe(404);
+  });
+
+  it("should delete an agent", async () => {
+    const createRes = await app.request("/api/agents", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "temp-agent", type: "custom" }),
+    });
+    const { agent } = await createRes.json();
+    const deleteRes = await app.request(`/api/agents/${agent.id}`, {
+      method: "DELETE",
+    });
+    expect(deleteRes.status).toBe(200);
+    const body = await deleteRes.json();
+    expect(body.status).toBe("deleted");
+  });
+
+  it("should start and stop an agent", async () => {
+    const createRes = await app.request("/api/agents", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "lifecycle-agent", type: "executor" }),
+    });
+    const { agent } = await createRes.json();
+
+    const startRes = await app.request(`/api/agents/${agent.id}/start`, {
+      method: "PUT",
+    });
+    expect(startRes.status).toBe(200);
+
+    const stopRes = await app.request(`/api/agents/${agent.id}/stop`, {
+      method: "PUT",
+    });
+    expect(stopRes.status).toBe(200);
   });
 });

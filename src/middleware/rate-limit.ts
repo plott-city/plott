@@ -5,7 +5,23 @@ interface RateLimitConfig {
   windowMs: number;
 }
 
-const store = new Map<string, { count: number; resetAt: number }>();
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+
+const store = new Map<string, RateLimitEntry>();
+
+// Cleanup stale entries every 5 minutes
+const cleanupInterval = setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of store.entries()) {
+    if (entry.resetAt < now) {
+      store.delete(key);
+    }
+  }
+}, 300_000);
+cleanupInterval.unref();
 
 export function rateLimiter(config: RateLimitConfig) {
   return async (c: Context, next: Next) => {
@@ -19,6 +35,10 @@ export function rateLimiter(config: RateLimitConfig) {
     }
 
     entry.count += 1;
+
+    c.header("X-RateLimit-Limit", config.maxRequests.toString());
+    c.header("X-RateLimit-Remaining", Math.max(0, config.maxRequests - entry.count).toString());
+    c.header("X-RateLimit-Reset", new Date(entry.resetAt).toISOString());
 
     if (entry.count > config.maxRequests) {
       return c.json({ error: "Too many requests" }, 429);

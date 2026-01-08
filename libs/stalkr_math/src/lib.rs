@@ -204,3 +204,5 @@ mod tests {
 // guard against division by zero in volatility
 
 // correct rounding in percentile rank
+
+// normalize comment formatting in math lib

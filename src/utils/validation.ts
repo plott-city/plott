@@ -12,3 +12,17 @@ export function validatePagination(query: {
   const limit = Math.min(100, Math.max(1, parseInt(query.limit || "20", 10)));
   return { page, limit };
 }
+
+export const paginationSchema = z.object({
+  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce.number().min(1).max(100).default(20),
+});
+
+export function sanitizeString(input: string): string {
+  return input.replace(/[<>&"']/g, "").trim();
+}
+
+export function isValidCronExpression(expr: string): boolean {
+  const parts = expr.split(" ");
+  return parts.length === 5 || parts.length === 6;
+}

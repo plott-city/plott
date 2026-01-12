@@ -26,3 +26,4 @@ Thank you for your interest in contributing.
 <!-- add sequence pattern unit tests [2.18] -->
 <!-- handle null pattern fields gracefully [3.3] -->
 <!-- handle network timeout gracefully [4.3] -->
+<!-- optimize memory usage for large datasets [5.3] -->

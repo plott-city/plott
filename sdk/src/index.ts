@@ -17,3 +17,5 @@ export type {
 // implement prediction history export
 
 // optimize data fetching with parallel requests
+
+// extract magic numbers to named constants

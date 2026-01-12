@@ -101,3 +101,5 @@ export class StalkrClient {
 // reduce allocation count in hot path
 
 // resolve remaining compiler warnings
+
+// correct exit code on prediction fetch failure

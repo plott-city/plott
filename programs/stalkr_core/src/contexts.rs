@@ -90,3 +90,5 @@ pub struct ResolvePrediction<'info> {
 // add volatility index calculation
 
 // add missing account close constraint
+
+// handle missing authority constraint

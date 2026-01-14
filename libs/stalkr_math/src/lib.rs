@@ -206,3 +206,5 @@ mod tests {
 // correct rounding in percentile rank
 
 // normalize comment formatting in math lib
+
+// avoid unnecessary allocation in histogram

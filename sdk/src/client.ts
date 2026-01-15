@@ -115,3 +115,5 @@ export class StalkrClient {
 // add prediction confidence filter method
 
 // sort import statements
+
+// handle rate limit response gracefully

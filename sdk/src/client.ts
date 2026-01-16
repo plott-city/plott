@@ -117,3 +117,5 @@ export class StalkrClient {
 // sort import statements
 
 // handle rate limit response gracefully
+
+// normalize whale address format

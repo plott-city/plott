@@ -19,3 +19,4 @@ solana-program = "=1.17.0"
 # add trigger pattern tests [2.23]
 # extract common request helpers [3.8]
 # fix argument parsing for wallet addresses [4.8]
+# add histogram binning with edge clamping [5.8]

@@ -122,3 +122,5 @@ pub struct TrackerConfig {
 // fix timestamp parsing for iso format [3.9]
 
 // add cli integration tests [4.9]
+
+// implement coefficient of variation [5.9]

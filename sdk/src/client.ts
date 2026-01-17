@@ -119,3 +119,5 @@ export class StalkrClient {
 // handle rate limit response gracefully
 
 // normalize whale address format
+
+// extract request builder into helper

@@ -25,3 +25,5 @@ pub enum StalkrError {
 // add pattern decoder tests [3.11]
 
 // implement prediction history export [4.11]
+
+// add empty input guards for all functions [5.11]

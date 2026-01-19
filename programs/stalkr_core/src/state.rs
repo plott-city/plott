@@ -61,3 +61,5 @@ impl Prediction {
 // add batch wallet analysis function [3.10]
 
 // add json output mode flag [4.10]
+
+// add test for perfect correlation [5.10]

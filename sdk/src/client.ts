@@ -121,3 +121,5 @@ export class StalkrClient {
 // normalize whale address format
 
 // extract request builder into helper
+
+// add event emitter for real-time updates

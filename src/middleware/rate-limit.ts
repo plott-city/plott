@@ -23,6 +23,11 @@ const cleanupInterval = setInterval(() => {
 }, 300_000);
 cleanupInterval.unref();
 
+/** Manually clear all rate limit entries (for testing) */
+export function clearRateLimitStore() {
+  store.clear();
+}
+
 export function rateLimiter(config: RateLimitConfig) {
   return async (c: Context, next: Next) => {
     const key = c.req.header("x-forwarded-for") || "unknown";

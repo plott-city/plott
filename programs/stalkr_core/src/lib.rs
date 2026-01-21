@@ -128,3 +128,5 @@ pub struct TrackerConfig {
 // validate tier bounds before registration
 
 // remove trailing whitespace across project
+
+// extract validation into helper function

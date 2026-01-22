@@ -29,3 +29,4 @@
 # implement resolve prediction with accuracy tracking [2.27]
 # implement prediction stream subscriber [3.12]
 # optimize data fetching with parallel requests [4.12]
+# implement sliding window sum optimization [5.12]

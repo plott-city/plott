@@ -24,7 +24,7 @@ agentRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
   const agent = await registry.getAgent(id);
   if (!agent) {
-    return c.json({ error: "Agent not found" }, 404);
+    return c.json({ error: "Agent not found", code: "AGENT_NOT_FOUND" }, 404);
   }
   return c.json({ agent });
 });
@@ -39,7 +39,7 @@ agentRouter.post("/", zValidator("json", createAgentSchema), async (c) => {
 agentRouter.put("/:id/start", async (c) => {
   const id = c.req.param("id");
   const agent = await registry.getAgent(id);
-  if (!agent) return c.json({ error: "Agent not found" }, 404);
+  if (!agent) return c.json({ error: "Agent not found", code: "AGENT_NOT_FOUND" }, 404);
   await registry.startAgent(id);
   return c.json({ status: "started" });
 });
@@ -47,7 +47,7 @@ agentRouter.put("/:id/start", async (c) => {
 agentRouter.put("/:id/stop", async (c) => {
   const id = c.req.param("id");
   const agent2 = await registry.getAgent(id);
-  if (!agent2) return c.json({ error: "Agent not found" }, 404);
+  if (!agent2) return c.json({ error: "Agent not found", code: "AGENT_NOT_FOUND" }, 404);
   await registry.stopAgent(id);
   return c.json({ status: "stopped" });
 });

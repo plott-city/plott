@@ -35,3 +35,5 @@ describe("StalkrClient", () => {
 // reorganize test file structure
 
 // add prediction filter test cases
+
+// add timeout configuration test

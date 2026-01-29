@@ -20,3 +20,4 @@ __pycache__/
 # implement response type guards [3.0]
 # implement prediction feed display [4.0]
 # implement percentile rank computation [5.0]
+# add detailed type documentation [6.0]

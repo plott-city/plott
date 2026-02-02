@@ -124,3 +124,5 @@ pub struct TrackerConfig {
 // add cli integration tests [4.9]
 
 // implement coefficient of variation [5.9]
+
+// add funding.yml for sponsor links [6.9]

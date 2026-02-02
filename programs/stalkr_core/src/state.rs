@@ -63,3 +63,5 @@ impl Prediction {
 // add json output mode flag [4.10]
 
 // add test for perfect correlation [5.10]
+
+// document combined scoring threshold rules [6.10]

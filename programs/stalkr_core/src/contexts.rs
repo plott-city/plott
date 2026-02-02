@@ -92,3 +92,5 @@ pub struct ResolvePrediction<'info> {
 // add missing account close constraint
 
 // handle missing authority constraint
+
+// prevent duplicate whale registration

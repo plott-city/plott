@@ -27,3 +27,5 @@ pub enum StalkrError {
 // implement prediction history export [4.11]
 
 // add empty input guards for all functions [5.11]
+
+// add infrastructure section to architecture [6.11]

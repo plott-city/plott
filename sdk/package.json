@@ -30,3 +30,4 @@
 # implement prediction stream subscriber [3.12]
 # optimize data fetching with parallel requests [4.12]
 # implement sliding window sum optimization [5.12]
+# document watchlist endpoints [6.12]

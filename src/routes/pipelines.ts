@@ -9,6 +9,7 @@ export const pipelineRouter = new Hono();
 const createPipelineSchema = z.object({
   name: z.string().min(1).max(64),
   steps: z.array(
+    // Ensure at least one step
     z.object({
       agentId: z.string(),
       action: z.string(),

@@ -21,3 +21,4 @@ __pycache__/
 # implement prediction feed display [4.0]
 # implement percentile rank computation [5.0]
 # add detailed type documentation [6.0]
+# simplify pattern matching pipeline [7.0]

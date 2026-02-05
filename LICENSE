@@ -27,3 +27,4 @@ SOFTWARE.
 # add pattern analysis output formatter [4.1]
 # add volatility index calculation [5.1]
 # add installation and setup guide [6.1]
+# reduce allocation count in hot path [7.1]

@@ -249,3 +249,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 <!-- implement tier display with color coding [4.2] -->
 <!-- add distribution helper tests [5.2] -->
 <!-- bump version to 0.4.0 [6.2] -->
+<!-- handle zero sample count edge case [7.2] -->

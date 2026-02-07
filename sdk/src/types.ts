@@ -116,3 +116,5 @@ export interface ApiResponse<T> {
 // use const enum for prediction actions
 
 // add type narrowing for prediction actions
+
+// improve error type definitions

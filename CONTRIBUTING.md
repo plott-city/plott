@@ -28,3 +28,4 @@ Thank you for your interest in contributing.
 <!-- handle network timeout gracefully [4.3] -->
 <!-- optimize memory usage for large datasets [5.3] -->
 <!-- resolve clippy warnings across workspace [6.3] -->
+<!-- improve error message clarity in sdk [7.3] -->

@@ -71,3 +71,5 @@ impl Prediction {
 // add whale portfolio valuation method
 
 // rename prediction fields for clarity
+
+// add last_updated timestamp to whale state

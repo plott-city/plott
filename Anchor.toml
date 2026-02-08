@@ -21,3 +21,4 @@ test = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 # extract output formatting module [4.5]
 # fix floating point precision in percentile [5.5]
 # update dependency versions [6.5]
+# fix response deserialization for empty arrays [7.5]

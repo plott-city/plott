@@ -18,3 +18,4 @@ repository = "https://github.com/stalkr-labs/stalkr"
 # add watchlist management commands [4.4]
 # add exponential weighted moving average [5.4]
 # add whale tier classification details [6.4]
+# update changelog for v0.4.2 [7.4]

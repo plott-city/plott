@@ -208,3 +208,5 @@ mod tests {
 // normalize comment formatting in math lib
 
 // avoid unnecessary allocation in histogram
+
+// add weighted percentile calculation

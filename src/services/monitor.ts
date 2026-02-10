@@ -28,7 +28,7 @@ interface CityStats {
 }
 
 export class MonitorService {
-  private startTime = Date.now();
+  private readonly startTime = Date.now();
 
   async getOverview(): Promise<CityOverview> {
     return {

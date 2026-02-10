@@ -23,3 +23,5 @@ pub enum StalkrError {
 // implement multi-pattern cross matching
 
 // improve pattern engine type safety
+
+// consolidate error variants

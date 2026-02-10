@@ -10,3 +10,4 @@ use_try_shorthand = true
 # add confidence score visualization [4.6]
 # implement z-score normalization [5.6]
 # expand prediction scoring explanation [6.6]
+# vectorize histogram computation [7.6]

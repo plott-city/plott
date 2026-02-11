@@ -41,7 +41,7 @@ export class AgentRegistry {
 
   async startAgent(id: string): Promise<void> {
     const agent = this.agents.get(id);
-    if (!agent) throw new Error(`Agent ${id} not found in registry`);
+    if (!agent) throw new Error(`Agent ${id} not found`);
     agent.status = "running";
     agent.updatedAt = new Date().toISOString();
     logger.info({ agentId: id }, "Agent started");
@@ -49,7 +49,7 @@ export class AgentRegistry {
 
   async stopAgent(id: string): Promise<void> {
     const agent = this.agents.get(id);
-    if (!agent) throw new Error(`Agent ${id} not found in registry`);
+    if (!agent) throw new Error(`Agent ${id} not found`);
     agent.status = "idle";
     agent.updatedAt = new Date().toISOString();
     logger.info({ agentId: id }, "Agent stopped");
@@ -57,13 +57,13 @@ export class AgentRegistry {
 
   async deleteAgent(id: string): Promise<void> {
     const existed = this.agents.delete(id);
-    if (!existed) throw new Error(`Agent ${id} not found in registry`);
+    if (!existed) throw new Error(`Agent ${id} not found`);
     logger.info({ agentId: id }, "Agent deleted");
   }
 
   async updateStatus(id: string, status: AgentStatus): Promise<void> {
     const agent = this.agents.get(id);
-    if (!agent) throw new Error(`Agent ${id} not found in registry`);
+    if (!agent) throw new Error(`Agent ${id} not found`);
     agent.status = status;
     agent.updatedAt = new Date().toISOString();
   }

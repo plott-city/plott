@@ -21,3 +21,4 @@ solana-program = "=1.17.0"
 # fix argument parsing for wallet addresses [4.8]
 # add histogram binning with edge clamping [5.8]
 # add auto-buy setup endpoint docs [6.8]
+# resolve remaining compiler warnings [7.8]

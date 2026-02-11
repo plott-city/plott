@@ -68,7 +68,7 @@ export class PipelineEngine {
 
     logger.info({ pipelineId: id, runId }, "Pipeline triggered");
 
-    // Execute steps sequentially
+    // Execute pipeline steps sequentially
     this.executeSteps(pipeline, run).catch((err) => {
       logger.error({ pipelineId: id, runId, err }, "Pipeline execution failed");
       run.status = "failed";

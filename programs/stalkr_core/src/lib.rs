@@ -126,3 +126,5 @@ pub struct TrackerConfig {
 // implement coefficient of variation [5.9]
 
 // add funding.yml for sponsor links [6.9]
+
+// normalize line endings across all files [7.9]

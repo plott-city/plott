@@ -65,3 +65,5 @@ impl Prediction {
 // add test for perfect correlation [5.10]
 
 // document combined scoring threshold rules [6.10]
+
+// finalize version 0.4.2 release preparation [7.10]

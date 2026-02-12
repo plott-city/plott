@@ -29,3 +29,5 @@ pub enum StalkrError {
 // add empty input guards for all functions [5.11]
 
 // add infrastructure section to architecture [6.11]
+
+// fix exit code on prediction fetch failure [7.11]

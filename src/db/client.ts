@@ -4,13 +4,14 @@ import { config } from "../utils/config";
 import * as schema from "./schema";
 
 const queryClient = postgres(config.DATABASE_URL, {
-  max: 10  // connection pool size,
+  max: 10,
   idle_timeout: 20,
   connect_timeout: 10,
 });
 
 export const db = drizzle(queryClient, { schema });
 
+/** Close all database connections */
 export async function closeDb(): Promise<void> {
   await queryClient.end();
 }

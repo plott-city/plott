@@ -73,3 +73,5 @@ impl Prediction {
 // rename prediction fields for clarity
 
 // add last_updated timestamp to whale state
+
+// reduce account space allocation

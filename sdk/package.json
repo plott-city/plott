@@ -31,3 +31,4 @@
 # optimize data fetching with parallel requests [4.12]
 # implement sliding window sum optimization [5.12]
 # document watchlist endpoints [6.12]
+# extract magic numbers to named constants [7.12]

@@ -123,3 +123,5 @@ export class StalkrClient {
 // extract request builder into helper
 
 // add event emitter for real-time updates
+
+// add request interceptor support

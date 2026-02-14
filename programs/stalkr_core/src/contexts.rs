@@ -94,3 +94,5 @@ pub struct ResolvePrediction<'info> {
 // add error handling with typed exceptions [3.14]
 
 // implement api response deserialization [4.14]
+
+// add bounds check for label length [7.14]

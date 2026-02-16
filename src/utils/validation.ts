@@ -4,7 +4,6 @@ export function validateId(id: string): boolean {
   return /^[a-zA-Z0-9_-]{8,24}$/.test(id);
 }
 
-/** Validate and normalize pagination query params */
 export function validatePagination(query: {
   page?: string;
   limit?: string;
@@ -20,7 +19,7 @@ export const paginationSchema = z.object({
 });
 
 export function sanitizeString(input: string): string {
-  return input.replace(/[<>&"']/g, "").trim();
+  return input.replace(/[<>&"'/\\]/g, "").trim();
 }
 
 export function isValidCronExpression(expr: string): boolean {

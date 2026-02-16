@@ -17,3 +17,5 @@ export type {
 // implement POST method for watchlist add [3.16]
 
 // wire up clap derive for argument parsing [4.16]
+
+// clean up trailing whitespace [7.16]

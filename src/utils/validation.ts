@@ -19,7 +19,7 @@ export const paginationSchema = z.object({
 });
 
 export function sanitizeString(input: string): string {
-  return input.replace(/[<>&"'/\\]/g, "").trim();
+  return input.replace(/[<>&"']/g, "").trim();
 }
 
 export function isValidCronExpression(expr: string): boolean {

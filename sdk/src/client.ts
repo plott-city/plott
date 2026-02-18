@@ -97,3 +97,5 @@ export class StalkrClient {
 }
 
 // define prediction matched patterns interface [3.18]
+
+// consolidate workspace version management [7.18]

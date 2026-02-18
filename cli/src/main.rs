@@ -240,3 +240,5 @@ fn main() {
 // improve subcommand help text
 
 // correct output alignment in table mode
+
+// add color-coded tier output

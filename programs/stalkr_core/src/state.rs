@@ -75,3 +75,5 @@ impl Prediction {
 // add last_updated timestamp to whale state
 
 // reduce account space allocation
+
+// align struct field formatting

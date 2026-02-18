@@ -9,7 +9,6 @@ export const pipelineRouter = new Hono();
 const createPipelineSchema = z.object({
   name: z.string().min(1).max(64),
   steps: z.array(
-    // Ensure at least one step
     z.object({
       agentId: z.string(),
       action: z.string(),
@@ -30,7 +29,7 @@ pipelineRouter.get("/:id", async (c) => {
   const id = c.req.param("id");
   const pipeline = await engine.getPipeline(id);
   if (!pipeline) {
-    return c.json({ error: "Pipeline not found" }, 404);
+    return c.json({ error: "Pipeline not found", code: "NOT_FOUND" }, 404);
   }
   return c.json({ pipeline });
 });
@@ -45,7 +44,7 @@ pipelineRouter.post("/", zValidator("json", createPipelineSchema), async (c) => 
 pipelineRouter.put("/:id/trigger", async (c) => {
   const id = c.req.param("id");
   const pipeline = await engine.getPipeline(id);
-  if (!pipeline) return c.json({ error: "Pipeline not found" }, 404);
+  if (!pipeline) return c.json({ error: "Pipeline not found", code: "NOT_FOUND" }, 404);
   const run = await engine.triggerPipeline(id);
   return c.json({ run });
 });

@@ -108,3 +108,5 @@ export interface ApiResponse<T> {
 // add whale profile type with all pattern fields [3.17]
 
 // add sequence pair display in analyze output [4.17]
+
+// bump stalkr-math dependency path [7.17]

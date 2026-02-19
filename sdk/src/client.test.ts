@@ -23,3 +23,5 @@ describe("StalkrClient", () => {
 });
 
 // add api response envelope type [3.19]
+
+// fix off-by-one in histogram edge bin [7.19]

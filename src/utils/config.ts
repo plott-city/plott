@@ -18,7 +18,6 @@ const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   console.error("Invalid environment variables:", parsed.error.flatten());
-  console.error("Exiting due to invalid config");
   process.exit(1);
 }
 

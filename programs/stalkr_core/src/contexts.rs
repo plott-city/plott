@@ -94,3 +94,5 @@ pub struct ResolvePrediction<'info> {
 // handle missing authority constraint
 
 // prevent duplicate whale registration
+
+// correct bump seed in prediction derivation

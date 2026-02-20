@@ -23,7 +23,7 @@ export async function authMiddleware(c: Context, next: Next) {
 }
 
 function decodeToken(token: string): { sub: string; wallet: string } {
-  // TODO: Implement actual JWT / wallet signature verification
+  // Placeholder for actual JWT / wallet signature verification
   const parts = token.split(".");
   if (parts.length !== 3) throw new Error("Malformed token");
   const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString());

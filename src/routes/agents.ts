@@ -13,6 +13,7 @@ const createAgentSchema = z.object({
   description: z.string().max(256).optional(),
 });
 
+// Singleton agent registry instance
 const registry = new AgentRegistry();
 
 agentRouter.get("/", async (c) => {

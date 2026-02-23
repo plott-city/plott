@@ -31,6 +31,7 @@ export interface CreateAgentInput {
 export interface AgentEvent {
   agentId: string;
   event: "started" | "stopped" | "error" | "completed";
+  /** ISO 8601 timestamp */
   timestamp: string;
   data?: Record<string, unknown>;
 }

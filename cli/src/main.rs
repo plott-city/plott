@@ -242,3 +242,5 @@ fn main() {
 // correct output alignment in table mode
 
 // add color-coded tier output
+
+// correct confidence bar rendering

@@ -12,7 +12,7 @@ cp .env.example .env
 npm run dev
 ```
 
-## API
+## API Reference
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|

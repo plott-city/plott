@@ -210,3 +210,5 @@ mod tests {
 // avoid unnecessary allocation in histogram
 
 // add weighted percentile calculation
+
+// add median calculation function

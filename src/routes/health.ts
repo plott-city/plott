@@ -6,7 +6,7 @@ healthRouter.get("/", (c) => {
   return c.json({
     status: "ok",
     timestamp: new Date().toISOString(),
-    uptime: Math.floor(process.uptime()),
+    uptime: process.uptime(),
   });
 });
 

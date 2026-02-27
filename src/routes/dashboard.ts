@@ -12,7 +12,7 @@ dashboardRouter.get("/overview", async (c) => {
 
 dashboardRouter.get("/agents/:id/metrics", async (c) => {
   const id = c.req.param("id");
-  const timeframe = c.req.query("timeframe") || "24h";
+  const timeframe = c.req.query("timeframe") || "24h"  // default timeframe;
   const metrics = await monitor.getAgentMetrics(id, timeframe);
   return c.json({ metrics });
 });

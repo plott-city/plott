@@ -22,7 +22,8 @@
     "orchestration",
     "pipelines",
     "monitoring",
-    "solana"
+    "solana",
+    "city"
   ],
   "author": "plott-city",
   "license": "MIT",

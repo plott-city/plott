@@ -44,7 +44,7 @@ Plott is an **agent orchestration platform** that lets you deploy, monitor, and 
 
 ```mermaid
 graph TD
-    A[Client] -->|REST API| B[Hono Server]
+    A[Client] -->|HTTP/REST| B[Hono Server]
     B --> C[Agent Registry]
     B --> D[Pipeline Engine]
     B --> E[Monitor Service]

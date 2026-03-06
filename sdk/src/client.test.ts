@@ -37,3 +37,5 @@ describe("StalkrClient", () => {
 // add prediction filter test cases
 
 // add timeout configuration test
+
+// add rate limit handling test

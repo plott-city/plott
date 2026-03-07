@@ -3,6 +3,7 @@ import { MonitorService } from "../services/monitor";
 
 export const dashboardRouter = new Hono();
 
+// TODO: add cache-control headers for performance
 const monitor = new MonitorService();
 
 dashboardRouter.get("/overview", async (c) => {
@@ -12,7 +13,7 @@ dashboardRouter.get("/overview", async (c) => {
 
 dashboardRouter.get("/agents/:id/metrics", async (c) => {
   const id = c.req.param("id");
-  const timeframe = c.req.query("timeframe") || "24h"  // default timeframe;
+  const timeframe = c.req.query("timeframe") || "24h";
   const metrics = await monitor.getAgentMetrics(id, timeframe);
   return c.json({ metrics });
 });

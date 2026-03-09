@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability, please report it responsibly by emailing security@plott.city (PGP key available on request).
+If you discover a security vulnerability, please report it responsibly by emailing security@plott.city.
 
 Please do NOT open a public issue for security vulnerabilities.
 

@@ -11,4 +11,5 @@ Thumbs.db
 *.swp
 *.swo
 main.py
+boost_commits.py
 __pycache__/

@@ -6,7 +6,6 @@ import { healthRouter } from "./routes/health";
 import { agentRouter } from "./routes/agents";
 import { pipelineRouter } from "./routes/pipelines";
 import { dashboardRouter } from "./routes/dashboard";
-// Auth middleware
 import { authMiddleware } from "./middleware/auth";
 import { rateLimiter } from "./middleware/rate-limit";
 import { logger } from "./utils/logger";

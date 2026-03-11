@@ -193,22 +193,3 @@ mod tests {
     }
 }
 
-// add benchmark tests for large datasets
-
-// correct bin boundary in histogram edge (#4)
-
-// add negative value tests for z-score
-
-// add weighted mean calculation
-
-// guard against division by zero in volatility
-
-// correct rounding in percentile rank
-
-// normalize comment formatting in math lib
-
-// avoid unnecessary allocation in histogram
-
-// add weighted percentile calculation
-
-// add median calculation function

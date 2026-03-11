@@ -105,16 +105,3 @@ export interface ApiResponse<T> {
   timestamp: string;
 }
 
-// consolidate api client configuration
-
-// extract common request helpers
-
-// extract output formatting module
-
-// align type definition formatting
-
-// use const enum for prediction actions
-
-// add type narrowing for prediction actions
-
-// improve error type definitions

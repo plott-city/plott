@@ -18,10 +18,3 @@ pub enum StalkrError {
     Overflow,
 }
 
-// add time window pattern tests
-
-// implement multi-pattern cross matching
-
-// improve pattern engine type safety
-
-// consolidate error variants

@@ -267,10 +267,3 @@ Configure automatic pre-emptive buying based on prediction signals.
 }
 ```
 
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->

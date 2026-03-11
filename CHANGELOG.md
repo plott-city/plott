@@ -44,6 +44,3 @@
 - Confidence score calculation
 - Initial project structure and configuration
 
-<!-- updated -->
-
-<!-- updated -->

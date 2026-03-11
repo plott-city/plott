@@ -116,10 +116,3 @@ The final confidence score is normalized to a 50-95% range. Predictions with sco
 | 2 of 4 | 55-69% | Low priority (watchlist only) |
 | 1 of 4 | 50-54% | No alert |
 
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->

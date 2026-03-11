@@ -96,32 +96,3 @@ export class StalkrClient {
   }
 }
 
-// add webhook event type definitions
-
-// reduce allocation count in hot path
-
-// resolve remaining compiler warnings
-
-// correct exit code on prediction fetch failure
-
-// add whale tier filter to predictions
-
-// add retry logic for failed requests
-
-// add pagination support for history
-
-// handle network timeout in batch requests
-
-// add prediction confidence filter method
-
-// sort import statements
-
-// handle rate limit response gracefully
-
-// normalize whale address format
-
-// extract request builder into helper
-
-// add event emitter for real-time updates
-
-// add request interceptor support

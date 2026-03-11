@@ -3,7 +3,4 @@ tab_spaces = 4
 edition = "2021"
 use_field_init_shorthand = true
 use_try_shorthand = true
-# add active trigger count aggregation
-# implement tier display with color coding
-# simplify pattern matching pipeline
-# update rust toolchain to 1.75
+

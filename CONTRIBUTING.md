@@ -22,4 +22,3 @@ Thank you for your interest in contributing.
 - Ensure all existing tests pass
 - Submit a pull request with a clear description
 
-<!-- updated -->

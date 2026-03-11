@@ -54,26 +54,3 @@ impl Prediction {
     pub const LEN: usize = 32 + 32 + 1 + 1 + 2 + 1 + 8 + 1 + 1 + 8 + 1 + 4;
 }
 
-// implement sequence pair detection
-
-// add trigger condition evaluator
-
-// implement cex withdrawal delay tracker
-
-// implement configuration file support
-
-// clean up unused imports across workspace
-
-// optimize state account layout (#10)
-
-// add prediction resolution timestamp
-
-// add whale portfolio valuation method
-
-// rename prediction fields for clarity
-
-// add last_updated timestamp to whale state
-
-// reduce account space allocation
-
-// align struct field formatting

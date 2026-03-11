@@ -52,6 +52,4 @@ jobs:
       - name: Test
         working-directory: ./sdk
         run: npm test
-# add installation and setup guide
-# update ci caching strategy
-# add code coverage step to ci
+

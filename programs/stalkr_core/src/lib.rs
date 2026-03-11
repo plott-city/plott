@@ -115,18 +115,3 @@ pub struct TrackerConfig {
     pub confidence_threshold: u8,
 }
 
-// correct response deserialization for empty arrays
-
-// add confidence score validation range
-
-// add tracker statistics method
-
-// apply consistent brace style across core
-
-// add overflow protection tests
-
-// validate tier bounds before registration
-
-// remove trailing whitespace across project
-
-// extract validation into helper function

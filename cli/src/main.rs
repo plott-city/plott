@@ -217,30 +217,3 @@ fn main() {
     }
 }
 
-// correct argument parsing for wallet addresses
-
-// add distribution helper tests
-
-// handle wallet address validation
-
-// add verbose output flag
-
-// handle empty prediction response
-
-// add export to csv functionality
-
-// add shell completion generation
-
-// add watch mode for continuous updates (#56)
-
-// add pattern summary in analyze output
-
-// improve error message formatting
-
-// improve subcommand help text
-
-// correct output alignment in table mode
-
-// add color-coded tier output
-
-// correct confidence bar rendering

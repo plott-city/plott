@@ -22,20 +22,3 @@ describe("StalkrClient", () => {
   });
 });
 
-// implement confidence score formatter
-
-// add pattern analysis output formatter
-
-// add correlation coefficient calculator
-
-// update changelog for v0.4.2
-
-// add end-to-end prediction flow test
-
-// reorganize test file structure
-
-// add prediction filter test cases
-
-// add timeout configuration test
-
-// add rate limit handling test

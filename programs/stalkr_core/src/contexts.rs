@@ -87,12 +87,3 @@ pub struct ResolvePrediction<'info> {
     pub authority: Signer<'info>,
 }
 
-// add volatility index calculation
-
-// add missing account close constraint
-
-// handle missing authority constraint
-
-// prevent duplicate whale registration
-
-// correct bump seed in prediction derivation

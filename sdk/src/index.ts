@@ -14,10 +14,3 @@ export type {
   ApiResponse,
 } from "./types";
 
-// implement prediction history export
-
-// optimize data fetching with parallel requests
-
-// extract magic numbers to named constants
-
-// correct type export for pattern analysis

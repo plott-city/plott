@@ -100,10 +100,3 @@ The Solana program (Anchor framework) provides on-chain prediction records for t
 | Humpback | $10M - $100M | Enhanced analysis |
 | Blue Whale | $100M+ | Full pattern suite |
 
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->
-
-<!-- updated -->

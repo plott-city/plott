@@ -19,6 +19,13 @@ docker compose up -d postgres redis
 npm run dev
 ```
 
+## Running Tests
+
+```bash
+npm test
+npm run test:coverage
+```
+
 ## Code Style
 
 - TypeScript strict mode

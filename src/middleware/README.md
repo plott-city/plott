@@ -1,3 +1,3 @@
 # Middleware
 
-Hono middleware for auth, rate limiting, CORS, and request tracking.
+Hono middleware: auth, rate limiting, CORS, request ID tracking.

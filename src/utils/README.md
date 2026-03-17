@@ -1,3 +1,3 @@
 # Utilities
 
-Shared utility modules for the Plott platform.
+Shared utility modules: config, logger, validation, errors, response helpers.

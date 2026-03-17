@@ -1,3 +1,3 @@
 # Routes
 
-Hono route handlers for health, agents, pipelines, and dashboard.
+API route handlers for health, agents, pipelines, and dashboard endpoints.

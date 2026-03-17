@@ -1,3 +1,3 @@
 # Database
 
-Drizzle ORM schema, client, queries, and migration utilities.
+Drizzle ORM: schema definitions, client, queries, migrations.

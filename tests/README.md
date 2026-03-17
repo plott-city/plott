@@ -2,4 +2,4 @@
 
 Vitest test suites for API endpoints, middleware, and utilities.
 
-Run: `npm test`
+Run with: `npm test`

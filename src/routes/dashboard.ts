@@ -3,7 +3,6 @@ import { MonitorService } from "../services/monitor";
 
 export const dashboardRouter = new Hono();
 
-// TODO: add cache-control headers for performance
 const monitor = new MonitorService();
 
 dashboardRouter.get("/overview", async (c) => {

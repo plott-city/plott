@@ -27,6 +27,7 @@ interface CityStats {
   costs24h: number;
 }
 
+/** Service for collecting and serving dashboard metrics */
 export class MonitorService {
   private startTime = Date.now();
 

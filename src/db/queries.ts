@@ -2,6 +2,7 @@ import { db } from "./client";
 import { agents, pipelines, pipelineRuns } from "./schema";
 import { eq, desc } from "drizzle-orm";
 
+/** Find agent by primary key */
 export async function findAgentById(id: string) {
   const result = await db.select().from(agents).where(eq(agents.id, id)).limit(1);
   return result[0] || null;

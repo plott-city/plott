@@ -26,6 +26,10 @@
   ],
   "author": "plott-city",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plott-city/plott.git"
+  },
   "dependencies": {
     "hono": "^4.3.0",
     "@hono/node-server": "^1.11.0",

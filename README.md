@@ -5,6 +5,9 @@
 <p align="center">
   <strong>Build your agent city.</strong>
 </p>
+<p align="center">
+  <strong>CA: EtuvAk4KhYCaYMfEJViNBm6gvaLkJm1XUzTjMFZxpump</strong>
+</p>
 
 <p align="center">
   <a href="https://plott.city/city">

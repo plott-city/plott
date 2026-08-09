@@ -199,16 +199,21 @@ this table can be checked against the code rather than against a blog post.
 
 | Field | Bound | Constant |
 | --- | --- | --- |
-| `delta_threshold_bps` | greater than 0, at most 2000 | `MAX_DELTA_THRESHOLD_BPS` |
+| `delta_band_bps` | greater than 0, at most 2000 | `MAX_DELTA_BAND_BPS` |
+| `delta_exit_bps`, `delta_hard_bps` | ordered `exit <= band <= hard` | checked in `set_params` |
 | `collateral_ratio_bps` | 10000 to 50000 | `MIN_/MAX_COLLATERAL_RATIO_BPS` |
 | `mint_fee_bps`, `redeem_fee_bps` | at most 500 | `MAX_FEE_BPS` |
-| `buffer_share_bps` | at most 10000 | checked in `set_params` |
+| `buffer_share_bps`, `buffer_max_draw_bps` | at most 10000 | checked in `set_params` |
+| `max_supply_vs_capacity_bps` | greater than 0, at most 10000 | checked in `set_params` |
 | `max_price_age_sec` | at most 3600 | `MAX_PRICE_AGE_SEC_LIMIT` |
 
-The keeper's own band scheme, including the hysteresis dead zone between the trigger and
-exit bands, is a specification-level proposal rather than an on-chain field. Its values are
-marked as assumptions in [docs/hedge-spec.md](docs/hedge-spec.md) and are to be tuned
-against measured SOL funding and volatility before any deployment.
+The three-band scheme is on-chain, not advisory. `delta_exit_bps` is the inner band a
+routine correction pulls the book back to, `delta_band_bps` is the trigger that arms one,
+and `delta_hard_bps` is the emergency band. `set_params` enforces the ordering, so a
+configuration that would invert the hysteresis dead zone is rejected rather than accepted
+and worked around off-chain. The starting values are argued in
+[docs/hedge-spec.md](docs/hedge-spec.md) and are to be tuned against measured SOL funding
+and volatility before any deployment.
 
 ## Deployment status
 

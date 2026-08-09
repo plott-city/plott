@@ -282,9 +282,11 @@ naming authority; where an earlier draft disagreed, the IDL wins.
   months -- hard-coding repeats the mistake).
 - `[FACT / IDL]` Carry accounting is a **3-way split**: `gross_funding` (venue funding, signed),
   `hedge_cost` (Jupiter borrow + fees + realized basis), `net_carry = gross_funding - hedge_cost`.
-  On-chain it is settled by `settle_funding(amount, funding_rate_bps)`, accumulated into
-  `Config.acc_funding_per_share`, and paid by `claim_funding()`. The header metric shows **net carry
-  with its sign** (negative as-is), never "funding APY."
+  On-chain: the carry **rate** is written only by `report_venue_state(net_carry_bps)`;
+  `settle_funding(amount)` moves the settled amount and accumulates `Config.acc_funding_per_share`;
+  `claim_funding()` pays stakers. (`settle_funding` no longer takes `funding_rate_bps` -- a re-publish
+  removed it so rate and settlement have one writer.) The header metric shows **net carry with its
+  sign** (negative as-is), never "funding APY."
 - `[FACT / IDL]` `carry_gate` and the capacity cap are **already Config fields**, not just design:
   `min_net_carry_bps` + `last_net_carry_bps` gate mint on carry; `max_supply_vs_capacity_bps` +
   `venue_capacity_notional` + `max_synthetic_supply` gate mint on hedgeable depth;

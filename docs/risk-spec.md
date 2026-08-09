@@ -253,6 +253,7 @@ observable state.
 | Venue admin takeover (2.1) | privileged-access social engineering (durable nonce) -- **realized 2026-04, $285M** | limit backing at venue, thin margin, monitor venue governance, small capacity cap | re-compromise of Velocity puts venue-held margin at risk |
 | Venue shutdown (2) | discontinuation (Zeta 2025-05, Mango 2025-01 -- realized) | venue-adapter abstraction, capacity cap, share cap | if Velocity winds down, hedge migrates under stress |
 | Negative carry (1) | perps at discount -- **current regime, -35.8% APR** | `carry_gate` blocks mint; deleverage playbook (1.5); buffer | indefinite regime > buffer runway degrades backing |
+| False hedge attestation | keeper over-reports `filled_notional` to hide under-hedge (`security.md` 1.1) | `HedgeFillTooLarge` upper bound + bond/slash + `venues_hash` re-derivable from the venue account | `hedged_notional` is the one non-recomputable input; bonded, bounded, verifiable |
 | ADL (2.2) | crash bankrupts venue counterparties | multi-venue (Jupiter has no ADL), emergency re-hedge, hard-band pause | hedge force-closed mid-crash, several % loss |
 | Socialized loss (2.3) | venue bad debt > insurance fund | in-venue share cap, thin margin | catastrophic-cascade haircut possible |
 | Liquidation (3) | SOL rally bleeds thin margin | 2-3x leverage, keeper top-ups | top-up failure (congestion) loses hedge |

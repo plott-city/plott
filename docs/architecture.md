@@ -218,13 +218,15 @@ integer math; ratios in bps (`anchor-lessons.md`, `solana/SKILL.md`).
 - **Keeper:** `keeper_register(bond_amount)`, `keeper_bond(amount)`, `keeper_unbond(amount)`,
   `keeper_slash(amount, reason_code, evidence_hash)`.
 - **Proof/funding:** `commit_rebalance_proof(sequence, venues_hash, venue_id, delta_bps_before,
-  delta_bps_after, hedged_notional, collateral_notional)`, `settle_funding(amount,
-  funding_rate_bps)`, `claim_funding()`.
+  delta_bps_after, hedged_notional, collateral_notional)`, `settle_funding(amount)` (moves the
+  settled amount only -- the carry *rate* is no longer an argument here), `claim_funding()`.
 - **Venue state:** `report_venue_state(venue_id, net_carry_bps, capacity_notional)` -- the keeper's
-  on-chain report that **feeds both gates**: it updates `Config.last_net_carry_bps` (read by
-  `carry_gate`, 9.1) and `Config.venue_capacity_notional` (read by the capacity cap, 9.2), stamped
-  with `venue_state_at` and bounded by `max_venue_state_age_sec` so stale venue data cannot pass a
-  gate. This closes the loop between off-chain measurement and the on-chain mint preconditions.
+  on-chain report and now the **sole writer of the carry rate**. It updates `Config.last_net_carry_bps`
+  (read by `carry_gate`, 9.1) and `Config.venue_capacity_notional` (read by the capacity cap, 9.2),
+  stamped with `venue_state_at` and bounded by `max_venue_state_age_sec`. The gates are **fail-closed**:
+  if `report_venue_state` was never called the state is missing (`VenueStateMissing`) and `mint` is
+  blocked; if it is older than `max_venue_state_age_sec` it is stale (`VenueStateStale`) and `mint` is
+  blocked; a future timestamp is rejected (`VenueStateFromFuture`). No fresh venue report, no mint.
 - **Staking:** `stake(amount)`, `request_unstake(amount)`, `unstake()`.
 - **Buffer:** `buffer_deposit(amount)`, `buffer_withdraw(amount)`.
 
@@ -248,30 +250,44 @@ $76.293 / Jupiter $76.294, `research-notes.md` 3), so this path is not `[BLOCKED
 
 ## 8. Execution proof: `commit_rebalance_proof`
 
-The proof is an **on-chain recomputation** from authoritative accounts, plus a hash-chained record.
-Instruction args (IDL): `sequence, venues_hash, venue_id, delta_bps_before, delta_bps_after,
-hedged_notional, collateral_notional`.
+The proof recomputes everything the program *can* derive, takes a **bonded attestation** for the one
+thing it cannot, and wraps both in a hash chain. Args (IDL): `sequence, venues_hash, venue_id,
+delta_bps_before, delta_bps_after, hedged_notional, collateral_notional`. Authoritative spec: the top
+comment of `packages/anchor-program/programs/poyz/src/instructions/proof.rs`.
 
-**Two hashes, deliberately distinct** (this is the core of "attest, don't trust"): `venues_hash` is
-the **keeper-submitted** commitment to the off-chain execution artifact (venue tx signatures, fills,
-per-venue amounts) -- data the program does not trust, only records and chains. `this_hash` is the
-**program-computed** chain hash. The keeper's reported scalars (`delta_bps_after`, `hedged_notional`,
-`collateral_notional`) are **demoted to verification targets**: the program recomputes delta from the
-live vault + venue position + Pyth price, requires the keeper's args to match, and enforces the band
-as a transaction invariant. A keeper cannot assert a balanced book into existence; it can only submit
-numbers the program independently re-derives. Logic:
+**Computed vs accepted -- the crux of "attest, don't trust."** `collateral_notional` and
+`delta_bps_after` arrive as keeper args but are **not** stored: the program **recomputes both** from
+`Config.total_collateral` valued at the Pyth price posted in the same transaction, enforces the band
+on *its* number, and rejects the call if the keeper's claim disagrees (`ProofCollateralMismatch` /
+`ProofDeltaMismatch`). The record holds the program's values. **`hedged_notional` remains an
+attestation** -- this program cannot read the venue account cross-program, so the short leg is the one
+number it must take on trust. That is exactly why it is bonded and slashable, why over-reporting it is
+separately capped at fill time (`HedgeFillTooLarge`, 9 / `security.md` 1.1), and why the full venue
+payload is hashed for off-chain verification. Everything the program can derive, it derives; the
+single trusted input is isolated and defended.
 
-1. Read `collateral_notional` from the vault + gated Pyth price; require the arg matches.
-2. Read the short from the venue position (`venue_id` selects Velocity=0 / Jupiter=1; validate key +
-   program owner); require `hedged_notional` arg matches. `[BLOCKED]` the Velocity account layout
-   (private beta) -- section 12.
+Logic:
+1. Recompute `collateral_notional = Config.total_collateral * price * 10^expo` (gated Pyth,
+   `OraclePriceStale` on staleness); require the keeper arg matches (`ProofCollateralMismatch`).
+2. Take `hedged_notional` as the bonded attestation (not re-derivable on-chain).
 3. Recompute `delta_bps_after = (collateral_notional - hedged_notional) * 10000 / collateral_notional`;
-   **require it equals the arg and `abs(delta_bps_after) <= delta_band_bps`**, else revert. A proof
-   for an unbalanced book cannot exist. `delta_bps_before` is the attested pre-cycle delta (recorded;
-   indexer checks continuity vs the previous proof).
-4. Chain: `this_hash = hash(prev_hash || sequence || venues_hash || venue_id || delta_bps_before ||
-   delta_bps_after || hedged_notional || collateral_notional || keeper)`; set `Config.last_proof_hash
-   = this_hash`, `rebalance_count += 1`; require `sequence` gap-free. Emit `RebalanceProofCommitted`.
+   require it equals the keeper arg (`ProofDeltaMismatch`) **and `abs(delta_bps_after) <=
+   delta_band_bps`**, else revert -- a proof for an unbalanced book cannot exist. `delta_bps_before`
+   is the attested pre-cycle delta (recorded; indexer checks continuity).
+4. Require `sequence` gap-free (`ProofSequenceMismatch`), slot monotonic (`ProofSlotNotMonotonic`),
+   `venues_hash` non-empty (`EmptyProofHash`); compute the chain link; emit `RebalanceProofCommitted`.
+
+**Two hashes, different trust properties:**
+- `venues_hash` is **keeper-supplied**: `sha256` over the Borsh `ExecutionPayload` (config, sequence,
+  keeper, venue_id, venue_subaccount, delta_before/after, collateral_notional, hedged_notional, oracle
+  fields, and the list of `Fill{order_id, price, base_amount, ts}`). The canonical encoder is in
+  `packages/delta-keeper` and `packages/sdk-ts` ships the verifier, so **anyone can re-derive it from
+  the actual venue account** and catch a false `hedged_notional` attestation.
+- `this_hash` is **program-computed, never supplied**: `sha256(prev_hash || config || sequence ||
+  slot || oracle_price || oracle_conf || oracle_expo || oracle_publish_time || collateral_notional ||
+  hedged_notional || delta_bps_before || delta_bps_after || venue_id || venues_hash || keeper)`, and
+  becomes `Config.last_proof_hash`. Altering any past field changes every subsequent `this_hash`, so
+  history cannot be rewritten. The account stores digests only (fixed 232 bytes).
 
 `RebalanceProof` account (19 fields, IDL): `keeper`, `venues_hash`, `prev_hash`, `this_hash`,
 `sequence`, `hedged_notional`, `collateral_notional`, `oracle_publish_time`, `oracle_posted_slot`,
@@ -316,6 +332,11 @@ sequenceDiagram
 Because minting completes only at `mint_confirm` -- **after** the hedge is placed (`filled_notional`)
 -- there is no transient unhedged-long window, and the price is locked at request time
 (`MintRequest.quoted_price`). `mint_cancel` refunds an unconfirmed request past its `deadline`.
+`filled_notional` is **bounded on both sides**: too small under-hedges the new supply
+(`HedgeFillTooSmall`); too large is the subtler attack -- an over-reported fill inflates
+`hedged_notional`, which is the one *attested* (non-recomputable) number in the proof (section 8), so
+an inflated fill would let real under-hedge slip past every delta-band check. The upper bound
+(`HedgeFillTooLarge`) closes that hole (`security.md` 1.1).
 
 ### 9.1 `carry_gate` (`Config.min_net_carry_bps`)
 Carry is negative today (`research-notes.md` 2). Minting in a negative-carry regime adds hedge that
@@ -334,10 +355,16 @@ POYZ can only mint what it can hedge, and Velocity is thin: OI ~$7,646, 24h volu
 order ~$103K (`research-notes.md` 1.3). `mint_request` reverts unless `total_synthetic + amount <=
 min(max_synthetic_supply, venue_capacity_notional * max_supply_vs_capacity_bps / 10000)`. The
 capacity is the keeper-reported hedgeable depth across venues (via `report_venue_state`, 5.2),
-published (`/hedge/venues`) so the limit is visible, not silent. Concretely, at a 15% in-venue share of Velocity's ~$7,646 OI, the
-Velocity leg can hold only ~**$1,147** of hedge (`hedge-spec.md` 4.1); almost everything must
-overflow to Jupiter at a borrow cost, or supply stays tiny -- the honest consequence of the current
-liquidity reality.
+published (`/hedge/venues`) so the limit is visible, not silent. Concretely, at a 15% in-venue share
+of Velocity's ~$7,646 OI, the Velocity leg can hold only ~**$1,147** of hedge (`hedge-spec.md` 4.1);
+almost everything must overflow to Jupiter at a borrow cost, or supply stays tiny -- the honest
+consequence of the current liquidity reality. **Do not read the aggregate as yield capacity:** the
+live backend `venue_capacity_usd` is ~$10.0M, but ~$10M of that is **Jupiter pool liquidity**
+(borrow-*cost* capacity) and only ~$7,680 is Velocity's funding-*yield* capacity -- the API's `basis`
+field marks that "OI and pool liquidity are different quantities." Summing them makes hedge headroom
+look like $10M when the yield-bearing leg is ~4 orders of magnitude smaller. The cap uses the
+aggregate for *can-we-hedge-at-all*; the carry math (`hedge-spec.md` 4.2) treats the Jupiter portion
+as pure cost.
 
 ---
 
@@ -355,9 +382,11 @@ redemption-driven imbalance rather than pretending it is free.
 
 ## 11. Funding settlement and staked $POYZ
 
-`settle_funding(amount, funding_rate_bps)` records realized carry and advances
+`settle_funding(amount)` records the realized carry *amount* and advances
 `Config.acc_funding_per_share` by the epoch's **net carry** (the 3-way split `gross_funding -
-hedge_cost`, `hedge-spec.md` 6) over `total_staked`. `claim_funding()` pays a staker
+hedge_cost`, `hedge-spec.md` 6) over `total_staked`. The carry *rate* is no longer an argument here --
+`report_venue_state(net_carry_bps)` is the single writer of the rate (5.2), so the sign and the
+settlement cannot diverge. `claim_funding()` pays a staker
 `amount * acc_funding_per_share - reward_debt`. Only **staked** $POYZ takes carry exposure -- holding
 $POYZ is holding a dollar. Because carry is negative today, the index can decrease: after the
 buffer's first-loss layer, staked holders bear the downside (disclosed, `risk-spec.md`). Two Velocity

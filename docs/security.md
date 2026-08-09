@@ -64,6 +64,16 @@ Residual keeper attacks:
   `commit_rebalance_proof` (`abs(net_carry) <= max_epoch_bleed_bps * hedged_notional` unless funding
   explains it), which fails or flags the commit; then slash + replace. In Path B this vector is
   closed at the source (program enforces price bounds before the CPI).
+- **False hedge attestation (real, patched case):** `hedged_notional` is the one number the program
+  cannot recompute -- it cannot read the venue account cross-program (`architecture.md` 8) -- so it is
+  the keeper's *attested* input, fed at `mint_confirm` via `filled_notional`. Over-reporting the fill
+  inflates the apparent hedge and would let genuine **under-hedge slip past every delta-band check**.
+  Originally `filled_notional` had only a lower bound; the missing upper bound was a live hole, now
+  closed with `HedgeFillTooLarge` (a matching `HedgeFillTooSmall` guards the other side). Defense in
+  depth: the upper bound; the bond/slash that makes a false attestation costly; and the `venues_hash`
+  payload, which anyone can re-derive from the actual venue account (verifier in `packages/sdk-ts`) to
+  catch the lie. This is the clearest illustration of why the single trusted input is bonded, bounded,
+  and independently verifiable.
 - **Griefing / churn:** over-trade or breach caps -- proof-checkable, slashable.
 
 ### 1.2 Oracle manipulation

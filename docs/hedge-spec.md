@@ -154,6 +154,13 @@ score_v(x) = carry_to_short(v)    # signed; +funding (Velocity) or -borrow_fee (
   Velocity's liquidity recovers post-relaunch, and it is why the capacity cap (`architecture.md` 9.2)
   keeps supply tiny during private beta. `1500 bps` is a starting `[ASSUMPTION]`; the real limit is
   set by measured depth, not by the percentage.
+  **Do not sum the two venues into one headroom number.** The live backend reports
+  `venue_capacity_usd ~= $10.0M`, but ~$10M of that is **Jupiter's JLP pool liquidity** (borrow-*cost*
+  capacity, `carry_model = BorrowFeePaying`) and only ~$7,680 is Velocity's funding-*yield* capacity;
+  the API's `basis` field flags that "OI and pool liquidity are different quantities" (`research-notes.md`
+  1.3). Reading the $10M aggregate as hedge headroom is a category error -- it makes the yield leg look
+  ~4 orders of magnitude larger than it is. The router uses the aggregate only for *can-we-hedge-at-all*
+  capacity; carry (4.2) counts the Jupiter portion as pure cost.
 - Depth / pool-capacity cap per clip; larger moves split into child clips (section 5). Jupiter is
   oracle-priced but bounded by JLP short capacity (`research-notes.md` 2.3).
 - Margin safety: keep each venue subaccount at/below target utilisation (<= 50%), buffering

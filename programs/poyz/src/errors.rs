@@ -82,6 +82,10 @@ pub enum PoyzError {
     VenueStateStale,
     #[msg("Reported venue state is timestamped in the future.")]
     VenueStateFromFuture,
+    #[msg("Venue state report is older than the one already on record.")]
+    VenueStateNotMonotonic,
+    #[msg("Signer is neither the authority nor an active bonded keeper.")]
+    NotAuthorizedReporter,
     #[msg("Reported net carry is outside the representable range.")]
     CarryOutOfRange,
     #[msg("Net carry is below the issuance floor; minting is refused.")]

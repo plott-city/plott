@@ -56,17 +56,25 @@ pub struct ParamsUpdated {
     pub max_supply_vs_capacity_bps: u16,
     pub max_venue_state_age_sec: u32,
     pub min_net_carry_bps: i32,
+    pub max_reportable_capacity_notional: u64,
     pub venue_flags: u8,
 }
 
 #[event]
 pub struct VenueStateReported {
     pub config: Pubkey,
-    pub authority: Pubkey,
+    /// Who reported. Recorded so a false report has a name attached to it:
+    /// this is the evidence trail behind `SLASH_REASON_CARRY_ANOMALY`.
+    pub reporter: Pubkey,
+    pub reporter_is_authority: bool,
     pub venue_id: u8,
     pub net_carry_bps: i32,
+    /// What the reporter claimed, before the admin ceiling was applied.
+    pub reported_capacity: u64,
+    /// What was actually stored: `min(reported, max_reportable_capacity)`.
     pub capacity_notional: u64,
     pub negative_funding_since: i64,
+    pub slot: u64,
     pub timestamp: i64,
 }
 

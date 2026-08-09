@@ -21,6 +21,7 @@ import {
   ORACLE_PARTIAL,
   ORACLE_SHIFTED,
   ORACLE_WIDE_CONF,
+  MAX_REPORTABLE_CAPACITY,
   MEASURED_CARRY_1Y,
   MEASURED_CARRY_30D,
   PARAMS,
@@ -65,6 +66,7 @@ type UpdateOverrides = Partial<{
   maxSupplyVsCapacityBps: number;
   maxVenueStateAgeSec: number;
   minNetCarryBps: number;
+  maxReportableCapacityNotional: BN;
   venueFlags: number;
 }>;
 
@@ -91,6 +93,7 @@ function updateParams(overrides: UpdateOverrides) {
     maxSupplyVsCapacityBps: overrides.maxSupplyVsCapacityBps ?? null,
     maxVenueStateAgeSec: overrides.maxVenueStateAgeSec ?? null,
     minNetCarryBps: overrides.minNetCarryBps ?? null,
+    maxReportableCapacityNotional: overrides.maxReportableCapacityNotional ?? null,
     venueFlags: overrides.venueFlags ?? null,
   };
 }
@@ -1194,7 +1197,11 @@ describe("poyz", () => {
     const reportHealthy = () =>
       env.program.methods
         .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, VENUE_CAPACITY)
-        .accountsPartial({ authority: env.payer.publicKey, config: env.config })
+        .accountsPartial({
+          signer: env.payer.publicKey,
+          config: env.config,
+          keeperAccount: null,
+        })
         .rpc();
 
     const tryMint = (nonce: number, oracle = ORACLE_HEALTHY) =>
@@ -1236,6 +1243,80 @@ describe("poyz", () => {
         .signers([env.keeper])
         .rpc();
 
+    it("lets an active bonded keeper report venue state", async () => {
+      // The natural caller is the delta-keeper daemon. Requiring the admin key
+      // here would hand that daemon set_params, set_paused, set_oracle and
+      // transfer_authority as well -- and make `poyz keeper run` mean "become
+      // an admin".
+      await env.program.methods
+        .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, VENUE_CAPACITY)
+        .accountsPartial({
+          signer: env.keeper.publicKey,
+          config: env.config,
+          keeperAccount: env.keeperAccount,
+        })
+        .signers([env.keeper])
+        .rpc();
+
+      const config = await env.program.account.config.fetch(env.config);
+      assert.equal(config.lastNetCarryBps, VENUE_CARRY_BPS);
+      assert.notEqual(config.venueStateAt.toString(), "0");
+    });
+
+    it("rejects a venue report from an account that is neither authority nor keeper", async () => {
+      await expectError(
+        env.program.methods
+          .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, VENUE_CAPACITY)
+          .accountsPartial({
+            signer: env.outsider.publicKey,
+            config: env.config,
+            keeperAccount: null,
+          })
+          .signers([env.outsider])
+          .rpc(),
+        "NotAuthorizedReporter"
+      );
+    });
+
+    it("clamps a keeper's capacity claim to the admin ceiling", async () => {
+      // The asymmetry that makes keeper reporting safe. A false carry report is
+      // caught later and slashed; a false *capacity* report would already have
+      // minted synthetic dollars that no slash can unmint. So the claim is
+      // clamped to a number only the authority sets.
+      const inflated = MAX_REPORTABLE_CAPACITY.muln(10);
+      await env.program.methods
+        .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, inflated)
+        .accountsPartial({
+          signer: env.keeper.publicKey,
+          config: env.config,
+          keeperAccount: env.keeperAccount,
+        })
+        .signers([env.keeper])
+        .rpc();
+
+      const config = await env.program.account.config.fetch(env.config);
+      assert.equal(
+        config.venueCapacityNotional.toString(),
+        MAX_REPORTABLE_CAPACITY.toString(),
+        "stored capacity is the ceiling, not the claim"
+      );
+
+      // Understating is always allowed: it only tightens issuance.
+      await env.program.methods
+        .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, new BN(1))
+        .accountsPartial({
+          signer: env.keeper.publicKey,
+          config: env.config,
+          keeperAccount: env.keeperAccount,
+        })
+        .signers([env.keeper])
+        .rpc();
+      const tightened = await env.program.account.config.fetch(env.config);
+      assert.equal(tightened.venueCapacityNotional.toString(), "1");
+
+      await reportHealthy();
+    });
+
     it("separates the measured carry regimes at the runway floor", async () => {
       // The live SOL delta-neutral carry is negative: the short leg pays
       // funding. The floor is -(3 % buffer / 30 days runway) annualised, and
@@ -1247,7 +1328,11 @@ describe("poyz", () => {
       // 1y at -35.8 %: inside the runway, issuance continues.
       await env.program.methods
         .reportVenueState(VENUE_VELOCITY, MEASURED_CARRY_1Y, VENUE_CAPACITY)
-        .accountsPartial({ authority: env.payer.publicKey, config: env.config })
+        .accountsPartial({
+          signer: env.payer.publicKey,
+          config: env.config,
+          keeperAccount: null,
+        })
         .rpc();
       await tryMint(59);
       await confirm(59, VENUE_VELOCITY, new BN(152_340_000), PROOF_HASH(70));
@@ -1256,7 +1341,11 @@ describe("poyz", () => {
       // protocol stops issuing rather than selling a loss.
       await env.program.methods
         .reportVenueState(VENUE_VELOCITY, MEASURED_CARRY_30D, VENUE_CAPACITY)
-        .accountsPartial({ authority: env.payer.publicKey, config: env.config })
+        .accountsPartial({
+          signer: env.payer.publicKey,
+          config: env.config,
+          keeperAccount: null,
+        })
         .rpc();
       await expectError(tryMint(60), "CarryBelowFloor");
 
@@ -1271,7 +1360,11 @@ describe("poyz", () => {
     it("refuses to issue beyond the hedgeable venue capacity", async () => {
       await env.program.methods
         .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, new BN(1_000_000))
-        .accountsPartial({ authority: env.payer.publicKey, config: env.config })
+        .accountsPartial({
+          signer: env.payer.publicKey,
+          config: env.config,
+          keeperAccount: null,
+        })
         .rpc();
 
       await expectError(tryMint(61), "VenueCapacityExceeded");
@@ -1589,7 +1682,11 @@ describe("poyz", () => {
       // whole reason the regime clock lives in `report_venue_state`.
       await env.program.methods
         .reportVenueState(VENUE_VELOCITY, -30, VENUE_CAPACITY)
-        .accountsPartial({ authority: env.payer.publicKey, config: env.config })
+        .accountsPartial({
+          signer: env.payer.publicKey,
+          config: env.config,
+          keeperAccount: null,
+        })
         .rpc();
 
       const config = await env.program.account.config.fetch(env.config);

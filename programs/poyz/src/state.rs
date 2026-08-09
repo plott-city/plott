@@ -254,8 +254,18 @@ pub struct Config {
     /// once it is older than `max_venue_state_age_sec`.
     pub venue_state_at: i64, // 8
     /// Notional the hedge venue can currently absorb, in synthetic base units,
-    /// as last reported. Caps issuance through `max_supply_vs_capacity_bps`.
+    /// as last reported *and clamped* to `max_reportable_capacity_notional`.
+    /// Caps issuance through `max_supply_vs_capacity_bps`.
     pub venue_capacity_notional: u64, // 8
+    /// Admin ceiling on what any reporter may claim the venue can absorb.
+    ///
+    /// This is the guardrail that makes it safe to let bonded keepers report.
+    /// A reporter may understate capacity -- that only tightens issuance -- but
+    /// cannot overstate it past a number the authority set. Without the clamp,
+    /// an inflated capacity report opens over-issuance, and unlike a false
+    /// carry report that is not something a later slash can undo: the synthetic
+    /// dollars have already been minted.
+    pub max_reportable_capacity_notional: u64, // 8
 
     pub max_price_age_sec: u32,        // 4
     pub request_ttl_sec: u32,          // 4
@@ -313,18 +323,18 @@ pub struct Config {
     /// Venue named by the most recent state report. `VENUE_NONE` before any.
     pub last_venue_id: u8, // 1
 
-    pub reserved: [u8; 33], // 33
+    pub reserved: [u8; 25], // 25
 }
 
 impl Config {
     //  8 pubkeys                                 256
     //    feed_id + last_proof_hash                64
     //  1 u128                                     16
-    // 18 u64/i64 accounting + timestamps         144
+    // 19 u64/i64 accounting + timestamps         152
     // 10 u32/i32                                  40
     // 11 u16                                      22
     //  9 u8/bool                                   9
-    //    reserved                                 33
+    //    reserved                                 25
     //                                        ---------
     pub const LEN: usize = 584;
 
@@ -495,7 +505,7 @@ mod tests {
 
     #[test]
     fn declared_lengths_match_the_structs() {
-        assert_eq!(Config::LEN, 256 + 64 + 16 + 144 + 40 + 22 + 9 + 33);
+        assert_eq!(Config::LEN, 256 + 64 + 16 + 152 + 40 + 22 + 9 + 25);
         assert_eq!(Keeper::LEN, 32 + 56 + 2 + 14);
         assert_eq!(MintRequest::LEN, 32 + 64 + 4 + 1 + 11);
         assert_eq!(RedeemRequest::LEN, 32 + 64 + 4 + 1 + 11);

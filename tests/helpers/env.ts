@@ -98,6 +98,10 @@ export const REFERENCE_MIN_NET_CARRY_BPS = -3_650; // -(3 % buffer / 30 d) * 365
 export const MEASURED_CARRY_1Y = -3_580; // -35.8 %/yr -- passes by 0.7 points
 export const MEASURED_CARRY_30D = -4_330; // -43.3 % -- refused
 
+/// Admin ceiling on any reported capacity. A reporter may claim less; it cannot
+/// claim more. Set above VENUE_CAPACITY so only the clamp test exercises it.
+export const MAX_REPORTABLE_CAPACITY = new BN("2000000000000");
+
 // `state::SLASH_REASON_*`, mirroring the enumerated faults in
 // `docs/security.md` 2.4.
 export const SLASH_REASON_DELTA_OUT_OF_BAND = 1;
@@ -140,6 +144,7 @@ export const PARAMS = {
   unstakeCooldownSec: 2,
   maxVenueStateAgeSec: 3_600,
   minNetCarryBps: REFERENCE_MIN_NET_CARRY_BPS,
+  maxReportableCapacityNotional: MAX_REPORTABLE_CAPACITY,
   venueFlags: VENUE_FLAGS_VELOCITY_ONLY, // the rest are reserved but disabled
 };
 
@@ -410,7 +415,11 @@ export async function setupEnv(): Promise<Env> {
   // capacity ceiling both read it, and both fail closed while it is unset.
   await program.methods
     .reportVenueState(VENUE_VELOCITY, VENUE_CARRY_BPS, VENUE_CAPACITY)
-    .accountsPartial({ authority: payer.publicKey, config: env.config })
+    .accountsPartial({
+      signer: payer.publicKey,
+      config: env.config,
+      keeperAccount: null, // authority path: no keeper account needed
+    })
     .rpc();
 
   return env;

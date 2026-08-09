@@ -62,8 +62,10 @@ pub struct InitializeParams {
     pub buffer_unlock_delay_sec: u32,
     pub unstake_cooldown_sec: u32,
     pub max_venue_state_age_sec: u32,
-    /// Issuance floor on net carry, in bps. Signed.
+    /// Issuance floor on net carry, in annualised bps. Signed.
     pub min_net_carry_bps: i32,
+    /// Admin ceiling on any reported venue capacity.
+    pub max_reportable_capacity_notional: u64,
     /// Bitmask of enabled hedge venues; bit n enables venue id n.
     pub venue_flags: u8,
 }
@@ -95,6 +97,7 @@ pub struct UpdateParams {
     pub unstake_cooldown_sec: Option<u32>,
     pub max_venue_state_age_sec: Option<u32>,
     pub min_net_carry_bps: Option<i32>,
+    pub max_reportable_capacity_notional: Option<u64>,
     pub venue_flags: Option<u8>,
 }
 
@@ -287,6 +290,7 @@ pub fn initialize(ctx: Context<Initialize>, params: InitializeParams) -> Result<
     config.last_venue_id = VENUE_NONE;
     config.last_net_carry_bps = 0;
     config.min_net_carry_bps = params.min_net_carry_bps;
+    config.max_reportable_capacity_notional = params.max_reportable_capacity_notional;
     config.max_venue_state_age_sec = params.max_venue_state_age_sec;
     config.venue_flags = params.venue_flags;
     config.max_supply_vs_capacity_bps = params.max_supply_vs_capacity_bps;
@@ -311,7 +315,7 @@ pub fn initialize(ctx: Context<Initialize>, params: InitializeParams) -> Result<
     config.redeem_paused = true;
     config.bump = ctx.bumps.config;
     config.vault_flags = 0;
-    config.reserved = [0u8; 33];
+    config.reserved = [0u8; 25];
 
     validate_config(config)?;
 
@@ -384,6 +388,9 @@ pub fn set_params(ctx: Context<AdminOnly>, params: UpdateParams) -> Result<()> {
     if let Some(v) = params.min_net_carry_bps {
         config.min_net_carry_bps = v;
     }
+    if let Some(v) = params.max_reportable_capacity_notional {
+        config.max_reportable_capacity_notional = v;
+    }
     if let Some(v) = params.venue_flags {
         config.venue_flags = v;
     }
@@ -444,6 +451,7 @@ pub fn set_params(ctx: Context<AdminOnly>, params: UpdateParams) -> Result<()> {
         max_supply_vs_capacity_bps: config.max_supply_vs_capacity_bps,
         max_venue_state_age_sec: config.max_venue_state_age_sec,
         min_net_carry_bps: config.min_net_carry_bps,
+        max_reportable_capacity_notional: config.max_reportable_capacity_notional,
         venue_flags: config.venue_flags,
     });
 
@@ -544,6 +552,28 @@ pub fn set_guardian(ctx: Context<AdminOnly>, guardian: Pubkey) -> Result<()> {
 /// reporter has a units bug, not a market observation.
 const CARRY_BPS_LIMIT: i32 = 1_000_000;
 
+#[derive(Accounts)]
+pub struct ReportVenueState<'info> {
+    /// The authority, or an active bonded keeper. Which one decides nothing
+    /// about what may be written -- both are clamped identically -- only
+    /// whether the call is allowed at all.
+    pub signer: Signer<'info>,
+
+    #[account(
+        mut,
+        seeds = [CONFIG_SEED],
+        bump = config.bump,
+    )]
+    pub config: Box<Account<'info, Config>>,
+
+    /// Required when the signer is a keeper, omitted when it is the authority.
+    #[account(
+        seeds = [KEEPER_SEED, signer.key().as_ref()],
+        bump,
+    )]
+    pub keeper_account: Option<Box<Account<'info, Keeper>>>,
+}
+
 /// Publish the hedge venue's current net carry and hedgeable capacity.
 ///
 /// This is the input to two on-chain gates that together implement "do not
@@ -564,43 +594,95 @@ const CARRY_BPS_LIMIT: i32 = 1_000_000;
 /// `max_venue_state_age_sec`, or before it has ever been written. Silence stops
 /// issuance; it does not permit it.
 ///
+/// # Who may report, and why it is not admin-only
+///
+/// The authority, or any **active bonded keeper**. Keeper access is the point:
+/// the natural caller is the `delta-keeper` daemon, and the alternative --
+/// handing that daemon the admin key -- would also hand it `set_params`,
+/// `set_paused`, `set_oracle` and `transfer_authority`. That contradicts the
+/// trust model in `docs/architecture.md` 4 (program owns, keeper is a
+/// low-trust delegate that cannot withdraw) and makes the permissionless
+/// `poyz keeper run` product impossible, because running a keeper would mean
+/// becoming an admin.
+///
+/// The remaining option -- an always-online admin process -- trades a bounded
+/// risk for an unbounded one: a permanently hot admin key is the single largest
+/// attack surface in the system, and the venue this protocol hedges on lost its
+/// admin authority to a durable-nonce attack four months ago.
+///
+/// A keeper reporting here is making the same *kind* of claim it already makes
+/// in `commit_rebalance_proof`, under the same bond, and a false carry report
+/// is `SLASH_REASON_CARRY_ANOMALY`.
+///
+/// # The capacity clamp
+///
+/// Carry and capacity are not symmetric risks. A false carry report is caught
+/// after the fact and punished by slashing. A false *capacity* report opens
+/// over-issuance, and slashing cannot undo that -- the synthetic dollars exist.
+/// So `capacity_notional` is clamped to `max_reportable_capacity_notional`,
+/// which only the authority sets. A reporter may understate capacity, which
+/// only tightens issuance and is therefore not an attack; it cannot overstate
+/// it past the authority's ceiling.
+///
+/// # Units
+///
 /// `net_carry_bps` is **annualised** basis points, signed, and must already be
 /// net of the venue's asymmetric-funding cap (Velocity pays at most one third
 /// of held equity per period). Reporting the headline funding rate instead
-/// over-states the carry and is a `SLASH_REASON_CARRY_ANOMALY` fault for a
-/// keeper, or authority misconduct otherwise.
+/// over-states the carry and is a `SLASH_REASON_CARRY_ANOMALY` fault.
 ///
 /// The unit is pinned here because the gate is meaningless without it: the
 /// floor it is compared against, `min_net_carry_bps`, is derived from the
 /// buffer runway rule and defaults to `state::REFERENCE_MIN_NET_CARRY_BPS`
 /// (-3650 bps/yr = -(3 % buffer / 30 days runway) annualised).
-///
-/// Authority-signed. Making this a bonded, slashable keeper attestation is the
-/// hardening path recorded in the README; today the authority is already
-/// trusted with strictly larger powers, and the freshness bound is what limits
-/// the damage of a false report.
 pub fn report_venue_state(
-    ctx: Context<AdminOnly>,
+    ctx: Context<ReportVenueState>,
     venue_id: u8,
     net_carry_bps: i32,
     capacity_notional: u64,
 ) -> Result<()> {
-    require!(
-        ctx.accounts.config.venue_enabled(venue_id),
-        PoyzError::VenueNotEnabled
-    );
+    let signer = ctx.accounts.signer.key();
+    let config = &ctx.accounts.config;
+
+    let is_authority = signer == config.authority;
+    if !is_authority {
+        let keeper = ctx
+            .accounts
+            .keeper_account
+            .as_ref()
+            .ok_or(PoyzError::NotAuthorizedReporter)?;
+        // The PDA seeds already bind the account to this signer; these check
+        // that the keeper is one the protocol currently stands behind.
+        require_keys_eq!(keeper.keeper, signer, PoyzError::NotAuthorizedReporter);
+        require!(keeper.active, PoyzError::KeeperInactive);
+        require!(
+            keeper.bonded >= config.min_keeper_bond,
+            PoyzError::InsufficientBond
+        );
+    }
+
+    require!(config.venue_enabled(venue_id), PoyzError::VenueNotEnabled);
     require!(
         net_carry_bps.abs() <= CARRY_BPS_LIMIT,
         PoyzError::CarryOutOfRange
     );
 
-    let now = Clock::get()?.unix_timestamp;
-    let authority_key = ctx.accounts.authority.key();
-    let config = &mut ctx.accounts.config;
+    let clock = Clock::get()?;
+    let now = clock.unix_timestamp;
+    // Several keepers may report concurrently. Monotonicity stops a stale
+    // report from a lagging reporter overwriting a fresher one and silently
+    // re-opening a gate that had already closed.
+    require!(
+        now >= config.venue_state_at,
+        PoyzError::VenueStateNotMonotonic
+    );
 
+    let effective_capacity = capacity_notional.min(config.max_reportable_capacity_notional);
+
+    let config = &mut ctx.accounts.config;
     config.last_venue_id = venue_id;
     config.last_net_carry_bps = net_carry_bps;
-    config.venue_capacity_notional = capacity_notional;
+    config.venue_capacity_notional = effective_capacity;
     config.venue_state_at = now;
 
     // The negative-funding regime clock lives here rather than in
@@ -617,11 +699,14 @@ pub fn report_venue_state(
 
     emit!(VenueStateReported {
         config: config.key(),
-        authority: authority_key,
+        reporter: signer,
+        reporter_is_authority: is_authority,
         venue_id,
         net_carry_bps,
-        capacity_notional,
+        reported_capacity: capacity_notional,
+        capacity_notional: effective_capacity,
         negative_funding_since: config.negative_funding_since,
+        slot: clock.slot,
         timestamp: now,
     });
 

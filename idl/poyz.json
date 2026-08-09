@@ -2425,7 +2425,11 @@
       "docs": [
         "Publish the hedge venue's net carry and hedgeable capacity. Feeds the",
         "two issuance gates (carry floor, capacity ceiling) and the negative",
-        "funding clock. Both gates fail closed once this goes stale."
+        "funding clock. Both gates fail closed once this goes stale.",
+        "",
+        "Callable by the authority **or** an active bonded keeper. The reported",
+        "capacity is clamped to `max_reportable_capacity_notional`, which only",
+        "the authority sets, so keeper access cannot become over-issuance."
       ],
       "discriminator": [
         215,
@@ -2439,11 +2443,13 @@
       ],
       "accounts": [
         {
-          "name": "authority",
-          "signer": true,
-          "relations": [
-            "config"
-          ]
+          "name": "signer",
+          "docs": [
+            "The authority, or an active bonded keeper. Which one decides nothing",
+            "about what may be written -- both are clamped identically -- only",
+            "whether the call is allowed at all."
+          ],
+          "signer": true
         },
         {
           "name": "config",
@@ -2460,6 +2466,32 @@
                   105,
                   103
                 ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "docs": [
+            "Required when the signer is a keeper, omitted when it is the authority."
+          ],
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "signer"
               }
             ]
           }
@@ -3794,181 +3826,191 @@
     },
     {
       "code": 6032,
+      "name": "VenueStateNotMonotonic",
+      "msg": "Venue state report is older than the one already on record."
+    },
+    {
+      "code": 6033,
+      "name": "NotAuthorizedReporter",
+      "msg": "Signer is neither the authority nor an active bonded keeper."
+    },
+    {
+      "code": 6034,
       "name": "CarryOutOfRange",
       "msg": "Reported net carry is outside the representable range."
     },
     {
-      "code": 6033,
+      "code": 6035,
       "name": "CarryBelowFloor",
       "msg": "Net carry is below the issuance floor; minting is refused."
     },
     {
-      "code": 6034,
+      "code": 6036,
       "name": "VenueCapacityExceeded",
       "msg": "Outstanding supply would exceed the hedgeable venue capacity."
     },
     {
-      "code": 6035,
+      "code": 6037,
       "name": "DeltaOutsideHardBand",
       "msg": "Book delta is outside the hard band; minting is refused."
     },
     {
-      "code": 6036,
+      "code": 6038,
       "name": "InsufficientBond",
       "msg": "Keeper bond is below the protocol minimum."
     },
     {
-      "code": 6037,
+      "code": 6039,
       "name": "KeeperInactive",
       "msg": "Keeper is not active."
     },
     {
-      "code": 6038,
+      "code": 6040,
       "name": "KeeperMismatch",
       "msg": "Keeper account does not belong to this protocol config."
     },
     {
-      "code": 6039,
+      "code": 6041,
       "name": "SlashExceedsBond",
       "msg": "Slash amount exceeds the keeper bond."
     },
     {
-      "code": 6040,
+      "code": 6042,
       "name": "UnknownSlashReason",
       "msg": "Slash reason code is not one of the enumerated faults."
     },
     {
-      "code": 6041,
+      "code": 6043,
       "name": "UnbondCooldownActive",
       "msg": "Unbond cooldown since the last committed proof has not elapsed."
     },
     {
-      "code": 6042,
+      "code": 6044,
       "name": "BondBelowMinimum",
       "msg": "Withdrawal would drop the bond below the protocol minimum without a full exit."
     },
     {
-      "code": 6043,
+      "code": 6045,
       "name": "ProofSequenceMismatch",
       "msg": "Proof sequence does not match the protocol rebalance counter."
     },
     {
-      "code": 6044,
+      "code": 6046,
       "name": "ProofSlotNotMonotonic",
       "msg": "Proof slot is not strictly greater than the last committed proof slot."
     },
     {
-      "code": 6045,
+      "code": 6047,
       "name": "EmptyProofHash",
       "msg": "Proof hash is empty."
     },
     {
-      "code": 6046,
+      "code": 6048,
       "name": "DeltaThresholdExceeded",
       "msg": "Post-rebalance delta deviation is outside the inner exit target."
     },
     {
-      "code": 6047,
+      "code": 6049,
       "name": "DeltaOutOfRange",
       "msg": "Reported delta deviation is outside the representable range."
     },
     {
-      "code": 6048,
+      "code": 6050,
       "name": "ProofCollateralMismatch",
       "msg": "Reported collateral notional disagrees with the on-chain valuation."
     },
     {
-      "code": 6049,
+      "code": 6051,
       "name": "ProofDeltaMismatch",
       "msg": "Reported post-rebalance delta disagrees with the on-chain valuation."
     },
     {
-      "code": 6050,
+      "code": 6052,
       "name": "RequestExpired",
       "msg": "Request has expired."
     },
     {
-      "code": 6051,
+      "code": 6053,
       "name": "RequestNotExpired",
       "msg": "Request has not expired yet; only the assigned keeper may act."
     },
     {
-      "code": 6052,
+      "code": 6054,
       "name": "SettlementDelayActive",
       "msg": "Settlement delay since the request has not elapsed."
     },
     {
-      "code": 6053,
+      "code": 6055,
       "name": "HedgeFillTooSmall",
       "msg": "Hedge fill is smaller than the required notional after slippage."
     },
     {
-      "code": 6054,
+      "code": 6056,
       "name": "HedgeFillTooLarge",
       "msg": "Hedge fill is larger than the notional being issued against."
     },
     {
-      "code": 6055,
+      "code": 6057,
       "name": "SlippageExceeded",
       "msg": "Resulting synthetic amount is below the caller's minimum."
     },
     {
-      "code": 6056,
+      "code": 6058,
       "name": "RedeemExceedsSupply",
       "msg": "Redeem amount exceeds the outstanding synthetic supply."
     },
     {
-      "code": 6057,
+      "code": 6059,
       "name": "RedeemExceedsCollateral",
       "msg": "Redeem would release more collateral than the protocol holds."
     },
     {
-      "code": 6058,
+      "code": 6060,
       "name": "SupplyCapExceeded",
       "msg": "Synthetic supply cap would be exceeded."
     },
     {
-      "code": 6059,
+      "code": 6061,
       "name": "NoStakers",
       "msg": "Nothing is staked, so funding cannot be distributed to stakers."
     },
     {
-      "code": 6060,
+      "code": 6062,
       "name": "InsufficientStake",
       "msg": "Staked balance is smaller than the requested amount."
     },
     {
-      "code": 6061,
+      "code": 6063,
       "name": "NothingToClaim",
       "msg": "There is nothing to claim."
     },
     {
-      "code": 6062,
+      "code": 6064,
       "name": "UnstakeCooldownActive",
       "msg": "Unstake cooldown has not elapsed."
     },
     {
-      "code": 6063,
+      "code": 6065,
       "name": "NoPendingUnstake",
       "msg": "There is no pending unstake to withdraw."
     },
     {
-      "code": 6064,
+      "code": 6066,
       "name": "InsufficientBuffer",
       "msg": "Insurance buffer balance is smaller than the requested amount."
     },
     {
-      "code": 6065,
+      "code": 6067,
       "name": "BufferLocked",
       "msg": "Insurance buffer is locked: funding is not in a sustained negative regime."
     },
     {
-      "code": 6066,
+      "code": 6068,
       "name": "BufferDrawCapExceeded",
       "msg": "Withdrawal exceeds the per-call insurance buffer draw cap."
     },
     {
-      "code": 6067,
+      "code": 6069,
       "name": "MathOverflow",
       "msg": "Arithmetic overflow."
     }
@@ -4290,7 +4332,22 @@
             "name": "venue_capacity_notional",
             "docs": [
               "Notional the hedge venue can currently absorb, in synthetic base units,",
-              "as last reported. Caps issuance through `max_supply_vs_capacity_bps`."
+              "as last reported *and clamped* to `max_reportable_capacity_notional`.",
+              "Caps issuance through `max_supply_vs_capacity_bps`."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "max_reportable_capacity_notional",
+            "docs": [
+              "Admin ceiling on what any reporter may claim the venue can absorb.",
+              "",
+              "This is the guardrail that makes it safe to let bonded keepers report.",
+              "A reporter may understate capacity -- that only tightens issuance -- but",
+              "cannot overstate it past a number the authority set. Without the clamp,",
+              "an inflated capacity report opens over-issuance, and unlike a false",
+              "carry report that is not something a later slash can undo: the synthetic",
+              "dollars have already been minted."
             ],
             "type": "u64"
           },
@@ -4468,7 +4525,7 @@
             "type": {
               "array": [
                 "u8",
-                33
+                25
               ]
             }
           }
@@ -4690,9 +4747,16 @@
           {
             "name": "min_net_carry_bps",
             "docs": [
-              "Issuance floor on net carry, in bps. Signed."
+              "Issuance floor on net carry, in annualised bps. Signed."
             ],
             "type": "i32"
+          },
+          {
+            "name": "max_reportable_capacity_notional",
+            "docs": [
+              "Admin ceiling on any reported venue capacity."
+            ],
+            "type": "u64"
           },
           {
             "name": "venue_flags",
@@ -5246,6 +5310,10 @@
           {
             "name": "min_net_carry_bps",
             "type": "i32"
+          },
+          {
+            "name": "max_reportable_capacity_notional",
+            "type": "u64"
           },
           {
             "name": "venue_flags",
@@ -6061,6 +6129,12 @@
             }
           },
           {
+            "name": "max_reportable_capacity_notional",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
             "name": "venue_flags",
             "type": {
               "option": "u8"
@@ -6102,8 +6176,16 @@
             "type": "pubkey"
           },
           {
-            "name": "authority",
+            "name": "reporter",
+            "docs": [
+              "Who reported. Recorded so a false report has a name attached to it:",
+              "this is the evidence trail behind `SLASH_REASON_CARRY_ANOMALY`."
+            ],
             "type": "pubkey"
+          },
+          {
+            "name": "reporter_is_authority",
+            "type": "bool"
           },
           {
             "name": "venue_id",
@@ -6114,12 +6196,26 @@
             "type": "i32"
           },
           {
+            "name": "reported_capacity",
+            "docs": [
+              "What the reporter claimed, before the admin ceiling was applied."
+            ],
+            "type": "u64"
+          },
+          {
             "name": "capacity_notional",
+            "docs": [
+              "What was actually stored: `min(reported, max_reportable_capacity)`."
+            ],
             "type": "u64"
           },
           {
             "name": "negative_funding_since",
             "type": "i64"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
           },
           {
             "name": "timestamp",

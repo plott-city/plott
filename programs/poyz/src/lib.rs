@@ -86,8 +86,12 @@ pub mod poyz {
     /// Publish the hedge venue's net carry and hedgeable capacity. Feeds the
     /// two issuance gates (carry floor, capacity ceiling) and the negative
     /// funding clock. Both gates fail closed once this goes stale.
+    ///
+    /// Callable by the authority **or** an active bonded keeper. The reported
+    /// capacity is clamped to `max_reportable_capacity_notional`, which only
+    /// the authority sets, so keeper access cannot become over-issuance.
     pub fn report_venue_state(
-        ctx: Context<AdminOnly>,
+        ctx: Context<ReportVenueState>,
         venue_id: u8,
         net_carry_bps: i32,
         capacity_notional: u64,

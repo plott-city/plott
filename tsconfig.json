@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "types": ["mocha", "chai", "node"],
-    "typeRoots": ["./node_modules/@types"],
+    // Both roots: this package keeps a small local node_modules (spl-token),
+    // while the workspace hoists @types to the repository root. Listing only
+    // the local one resolves to an empty directory and every global test
+    // symbol disappears.
+    "typeRoots": ["./node_modules/@types", "../../node_modules/@types"],
     "lib": ["es2020"],
     "module": "commonjs",
     "target": "es2020",

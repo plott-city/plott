@@ -107,6 +107,28 @@
 //! disclosed in `docs/risk-spec.md`. The proof is an accountability primitive,
 //! not a solvency proof, and this program does not claim otherwise.
 //!
+//! # Why the reported delta is checked against the *exit* band
+//!
+//! `delta_bps_after` must agree with the program's own figure to within
+//! `delta_exit_bps` (25 bps), **not** `delta_band_bps` (100 bps). That is
+//! deliberate and must stay that way.
+//!
+//! The exit band is where a rebalance is required to land; the trigger band is
+//! merely where one becomes necessary. Widening this comparison to the trigger
+//! band would accept a keeper whose own accounting is off by up to a full
+//! trigger width -- which is to say, a keeper that cannot tell "rebalance
+//! finished" from "rebalance needed". It would also let a keeper that stopped
+//! at the trigger claim it had reached the target.
+//!
+//! It matches the off-chain hysteresis in `packages/delta-keeper`, which
+//! rebalances back to the inner band rather than to zero. If a future change
+//! makes this 100, the two halves stop agreeing and the proof stops meaning
+//! what it says.
+//!
+//! The collateral comparison uses a *relative* tolerance
+//! (`max_hedge_slippage_bps`) for a different reason: `total_collateral` can
+//! legitimately move between a keeper building the transaction and it landing.
+//!
 //! # Replay and reordering
 //!
 //! Three independent guards:

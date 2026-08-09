@@ -171,21 +171,19 @@ pub fn mint_cancel(ctx: Context<MintCancelCtx>, nonce: u64) -> Result<()>;
 pub fn commit_rebalance_proof(
     ctx: Context<CommitRebalanceProof>,
     sequence: u64,
-    proof_hash: [u8; 32],
+    venues_hash: [u8; 32],
     venue_id: u8,
     delta_bps_before: i32,
     delta_bps_after: i32,
     hedged_notional: u64,
     collateral_notional: u64,
 ) -> Result<()>;
-pub fn settle_funding(
-    ctx: Context<SettleFunding>,
-    amount: u64,
-    funding_rate_bps: i32,
-) -> Result<()>;
+pub fn settle_funding(ctx: Context<SettleFunding>, amount: u64) -> Result<()>;
 ```
 
-`mint_confirm` takes the venue and filled notional of the hedge that was actually opened,
+`venues_hash` is the keeper's own commitment to the venue exposures it reported; the
+program computes its own chain hash separately, so a keeper-supplied value is a
+verification target rather than a trusted input. `mint_confirm` takes the venue and filled notional of the hedge that was actually opened,
 so issuance is tied to a specific execution rather than to an assertion that one happened.
 Redeem mirrors mint (`redeem_request`, `redeem_confirm`, `redeem_cancel`). The remaining
 instructions cover authority transfer, vault initialisation, unbonding, staking, and the

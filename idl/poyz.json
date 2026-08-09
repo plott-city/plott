@@ -1,0 +1,6132 @@
+{
+  "address": "9hefehGRVBDE2A9kby8oQnRvEF5yK42px2ssfsQjchzU",
+  "metadata": {
+    "name": "poyz",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Poyz delta-neutral synthetic dollar: mint/redeem, keeper bond/slash, on-chain execution proofs"
+  },
+  "instructions": [
+    {
+      "name": "accept_authority",
+      "docs": [
+        "Accept a proposed authority. Step two of two, signed by the incoming",
+        "authority so an unusable address can never take over."
+      ],
+      "discriminator": [
+        107,
+        86,
+        198,
+        91,
+        33,
+        12,
+        107,
+        160
+      ],
+      "accounts": [
+        {
+          "name": "pending_authority",
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "buffer_deposit",
+      "docs": [
+        "Deposit into the insurance buffer. Permissionless."
+      ],
+      "discriminator": [
+        116,
+        43,
+        213,
+        36,
+        140,
+        232,
+        79,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "depositor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "depositor_synthetic",
+          "writable": true
+        },
+        {
+          "name": "buffer_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "buffer_withdraw",
+      "docs": [
+        "Draw the insurance buffer into the funding vault during a sustained",
+        "negative funding regime. Authority only; the destination is pinned by",
+        "PDA seeds and cannot be chosen by the caller."
+      ],
+      "discriminator": [
+        150,
+        119,
+        201,
+        186,
+        120,
+        192,
+        208,
+        175
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "buffer_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "funding_vault",
+          "docs": [
+            "The only possible destination. Pinned by seeds, not passed in by the",
+            "caller: the authority decides whether and how much, never where."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  117,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "claim_funding",
+      "docs": [
+        "Claim accrued funding, pro rata to the staked amount."
+      ],
+      "discriminator": [
+        78,
+        203,
+        116,
+        47,
+        72,
+        216,
+        37,
+        162
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "position"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "funding_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  117,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_synthetic",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "commit_rebalance_proof",
+      "docs": [
+        "Commit the execution proof for one rebalance. Bonded keepers only,",
+        "gapless sequence, strictly increasing slot, fresh oracle, and the",
+        "post-rebalance delta inside the inner exit target. The proof chain head",
+        "is computed on-chain, never supplied."
+      ],
+      "discriminator": [
+        115,
+        134,
+        250,
+        254,
+        200,
+        170,
+        33,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "keeper_account"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proof",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "sequence"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "docs": [
+            "verification level, feed id, staleness, confidence)."
+          ],
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "sequence",
+          "type": "u64"
+        },
+        {
+          "name": "venues_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "venue_id",
+          "type": "u8"
+        },
+        {
+          "name": "delta_bps_before",
+          "type": "i32"
+        },
+        {
+          "name": "delta_bps_after",
+          "type": "i32"
+        },
+        {
+          "name": "hedged_notional",
+          "type": "u64"
+        },
+        {
+          "name": "collateral_notional",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "init_bond_vaults",
+      "docs": [
+        "Create the live-bond and slashed-bond ($POYZ) vaults."
+      ],
+      "discriminator": [
+        48,
+        98,
+        129,
+        84,
+        132,
+        97,
+        62,
+        112
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buffer_bond_vault",
+          "docs": [
+            "Slashed keeper bonds land here. Held separately from live bonds so the",
+            "live-bond vault balance always equals the sum of `Keeper::bonded`, which",
+            "makes an accounting drift detectable by an external observer."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_collateral_vault",
+      "docs": [
+        "Create the collateral vault token account."
+      ],
+      "discriminator": [
+        159,
+        117,
+        208,
+        63,
+        147,
+        158,
+        1,
+        0
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  97,
+                  116,
+                  101,
+                  114,
+                  97,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_funding_vaults",
+      "docs": [
+        "Create the funding vault and the insurance buffer vault."
+      ],
+      "discriminator": [
+        31,
+        200,
+        144,
+        35,
+        111,
+        103,
+        241,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "funding_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  117,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buffer_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_stake_vaults",
+      "docs": [
+        "Create the stake vault and the redeem escrow."
+      ],
+      "discriminator": [
+        24,
+        73,
+        71,
+        90,
+        87,
+        146,
+        236,
+        66
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "stake_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "redeem_escrow",
+          "docs": [
+            "Redeem requests escrow their synthetic dollars here rather than burning",
+            "on request. Burning early and re-minting on cancel would put a mint CPI",
+            "on the cancel path -- the one path a user can trigger unilaterally --",
+            "and any bug there is unbacked issuance. Escrow makes cancel a transfer."
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize",
+      "docs": [
+        "Create the protocol config PDA. The protocol starts paused; the vault",
+        "token accounts do not exist yet."
+      ],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint"
+        },
+        {
+          "name": "synthetic_mint",
+          "docs": [
+            "The synthetic dollar. Its mint authority must already be the config PDA",
+            "(a derivable address), and it must have no freeze authority."
+          ]
+        },
+        {
+          "name": "bond_mint",
+          "docs": [
+            "$POYZ. Keeper bonds are denominated in it."
+          ]
+        },
+        {
+          "name": "oracle",
+          "docs": [
+            "the Pyth receiver program, discriminator must be PriceUpdateV2, and the",
+            "feed id must match `params.feed_id`."
+          ]
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "InitializeParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "keeper_bond",
+      "docs": [
+        "Top up an existing bond. Re-activates a keeper knocked below the",
+        "minimum by a slash."
+      ],
+      "discriminator": [
+        177,
+        155,
+        19,
+        167,
+        228,
+        169,
+        211,
+        37
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "keeper_account"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "keeper_bond_source",
+          "writable": true
+        },
+        {
+          "name": "bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "keeper_register",
+      "docs": [
+        "Register as a Delta Keeper and post the initial $POYZ bond."
+      ],
+      "discriminator": [
+        137,
+        179,
+        135,
+        236,
+        110,
+        248,
+        31,
+        168
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "keeper_bond_source",
+          "writable": true
+        },
+        {
+          "name": "bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "bond_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "keeper_slash",
+      "docs": [
+        "Slash a keeper bond into the insurance buffer's $POYZ vault. Authority",
+        "only. `reason_code` must name one of the enumerated faults in",
+        "`state::SLASH_REASON_*`, and `evidence_hash` commits to the off-chain",
+        "evidence bundle that supports it."
+      ],
+      "discriminator": [
+        178,
+        24,
+        11,
+        180,
+        179,
+        25,
+        161,
+        167
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper_account.keeper",
+                "account": "Keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buffer_bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "reason_code",
+          "type": "u8"
+        },
+        {
+          "name": "evidence_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "keeper_unbond",
+      "docs": [
+        "Withdraw bond. Gated on the unbond cooldown since the keeper's last",
+        "committed proof."
+      ],
+      "discriminator": [
+        166,
+        29,
+        68,
+        178,
+        52,
+        22,
+        244,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "signer": true,
+          "relations": [
+            "keeper_account"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "bond_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_bond_destination",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_cancel",
+      "docs": [
+        "Reclaim escrowed collateral from an expired mint request. User only,",
+        "callable while paused."
+      ],
+      "discriminator": [
+        125,
+        150,
+        96,
+        219,
+        71,
+        191,
+        131,
+        21
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "request"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  97,
+                  116,
+                  101,
+                  114,
+                  97,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_confirm",
+      "docs": [
+        "Phase two of a mint: a bonded keeper attests the hedge fill, and the",
+        "synthetic dollars are issued against the lower of the two quotes."
+      ],
+      "discriminator": [
+        51,
+        119,
+        158,
+        146,
+        186,
+        14,
+        180,
+        82
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "keeper_account"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "by the request PDA seeds. Receives the request account's rent back."
+          ],
+          "writable": true,
+          "relations": [
+            "request"
+          ]
+        },
+        {
+          "name": "synthetic_mint",
+          "writable": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "user_synthetic",
+          "writable": true
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "hedge_proof_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "venue_id",
+          "type": "u8"
+        },
+        {
+          "name": "filled_notional",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_request",
+      "docs": [
+        "Phase one of a mint: escrow collateral and quote a notional. Nothing is",
+        "issued here."
+      ],
+      "discriminator": [
+        191,
+        136,
+        46,
+        36,
+        221,
+        147,
+        50,
+        193
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  105,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  97,
+                  116,
+                  101,
+                  114,
+                  97,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "collateral_amount",
+          "type": "u64"
+        },
+        {
+          "name": "min_synthetic_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem_cancel",
+      "docs": [
+        "Reclaim escrowed synthetic from an expired redeem request. User only,",
+        "callable while paused."
+      ],
+      "discriminator": [
+        220,
+        145,
+        109,
+        70,
+        81,
+        232,
+        95,
+        130
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "request"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "redeem_escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_synthetic",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem_confirm",
+      "docs": [
+        "Phase two of a redeem: a bonded keeper attests the unwind, the escrowed",
+        "synthetic is burned and collateral is released."
+      ],
+      "discriminator": [
+        144,
+        38,
+        239,
+        89,
+        61,
+        150,
+        116,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "keeper",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "keeper_account"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "keeper_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  107,
+                  101,
+                  101,
+                  112,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "keeper"
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "docs": [
+            "PDA seeds. Receives the collateral and the request account's rent."
+          ],
+          "writable": true,
+          "relations": [
+            "request"
+          ]
+        },
+        {
+          "name": "synthetic_mint",
+          "writable": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "redeem_escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "collateral_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  108,
+                  108,
+                  97,
+                  116,
+                  101,
+                  114,
+                  97,
+                  108,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_collateral",
+          "writable": true
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "unwind_proof_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "venue_id",
+          "type": "u8"
+        },
+        {
+          "name": "unwound_notional",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "redeem_request",
+      "docs": [
+        "Phase one of a redeem: escrow synthetic and quote the collateral."
+      ],
+      "discriminator": [
+        237,
+        30,
+        113,
+        222,
+        127,
+        230,
+        203,
+        243
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "request",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  114,
+                  101,
+                  113,
+                  117,
+                  101,
+                  115,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "user_synthetic",
+          "writable": true
+        },
+        {
+          "name": "redeem_escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  100,
+                  101,
+                  101,
+                  109,
+                  95,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "synthetic_amount",
+          "type": "u64"
+        },
+        {
+          "name": "min_collateral_out",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "report_venue_state",
+      "docs": [
+        "Publish the hedge venue's net carry and hedgeable capacity. Feeds the",
+        "two issuance gates (carry floor, capacity ceiling) and the negative",
+        "funding clock. Both gates fail closed once this goes stale."
+      ],
+      "discriminator": [
+        215,
+        53,
+        254,
+        87,
+        11,
+        148,
+        24,
+        235
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "venue_id",
+          "type": "u8"
+        },
+        {
+          "name": "net_carry_bps",
+          "type": "i32"
+        },
+        {
+          "name": "capacity_notional",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "request_unstake",
+      "docs": [
+        "Begin an exit. The amount stops earning immediately and becomes",
+        "withdrawable after `unstake_cooldown_sec`."
+      ],
+      "discriminator": [
+        44,
+        154,
+        110,
+        253,
+        160,
+        202,
+        54,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "position"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "stake_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_synthetic",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_guardian",
+      "docs": [
+        "Replace the pause-only guardian key. Authority only."
+      ],
+      "discriminator": [
+        147,
+        243,
+        50,
+        121,
+        154,
+        164,
+        50,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "guardian",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "set_oracle",
+      "docs": [
+        "Repoint the protocol at a different Pyth price update account. The new",
+        "account is authenticated before it is stored."
+      ],
+      "discriminator": [
+        186,
+        128,
+        81,
+        104,
+        74,
+        79,
+        18,
+        224
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "oracle",
+          "docs": [
+            "stored -- owner, discriminator and feed id must all check out."
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "feed_id",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "set_params",
+      "docs": [
+        "Update protocol parameters. Authority only. Every field is optional and",
+        "the whole resulting config is re-validated against the bounds in",
+        "`state`, which the authority cannot exceed."
+      ],
+      "discriminator": [
+        27,
+        234,
+        178,
+        52,
+        147,
+        2,
+        187,
+        141
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "UpdateParams"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "set_paused",
+      "docs": [
+        "Set the mint and redeem circuit breakers independently. The authority",
+        "may set either flag; the guardian may only move them toward paused.",
+        "Unpausing requires all vault token accounts to exist."
+      ],
+      "discriminator": [
+        91,
+        60,
+        125,
+        192,
+        176,
+        225,
+        166,
+        218
+      ],
+      "accounts": [
+        {
+          "name": "signer",
+          "docs": [
+            "Either the authority or the guardian. Checked in the handler, because",
+            "which one signed decides what the instruction is allowed to do."
+          ],
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "mint_paused",
+          "type": "bool"
+        },
+        {
+          "name": "redeem_paused",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "settle_funding",
+      "docs": [
+        "Book a funding settlement. Authority only. The carry regime itself is",
+        "written by `report_venue_state`, not here."
+      ],
+      "discriminator": [
+        11,
+        251,
+        12,
+        161,
+        199,
+        228,
+        133,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "authority_synthetic",
+          "writable": true
+        },
+        {
+          "name": "funding_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  117,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buffer_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  102,
+                  102,
+                  101,
+                  114,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "stake",
+      "docs": [
+        "Stake synthetic dollars to earn funding."
+      ],
+      "discriminator": [
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "owner_synthetic",
+          "writable": true
+        },
+        {
+          "name": "stake_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "transfer_authority",
+      "docs": [
+        "Propose a new authority. Step one of two."
+      ],
+      "discriminator": [
+        48,
+        169,
+        76,
+        72,
+        229,
+        180,
+        55,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "new_authority",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "unstake",
+      "docs": [
+        "Withdraw the pending unstake once its cooldown has elapsed. Never",
+        "gated on a pause."
+      ],
+      "discriminator": [
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true,
+          "relations": [
+            "position"
+          ]
+        },
+        {
+          "name": "config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "synthetic_mint",
+          "relations": [
+            "config"
+          ]
+        },
+        {
+          "name": "stake_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner_synthetic",
+          "writable": true
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Config",
+      "discriminator": [
+        155,
+        12,
+        170,
+        224,
+        30,
+        250,
+        204,
+        130
+      ]
+    },
+    {
+      "name": "Keeper",
+      "discriminator": [
+        127,
+        221,
+        194,
+        46,
+        120,
+        73,
+        144,
+        77
+      ]
+    },
+    {
+      "name": "MintRequest",
+      "discriminator": [
+        60,
+        88,
+        16,
+        213,
+        180,
+        138,
+        14,
+        225
+      ]
+    },
+    {
+      "name": "RebalanceProof",
+      "discriminator": [
+        63,
+        163,
+        212,
+        8,
+        154,
+        117,
+        204,
+        219
+      ]
+    },
+    {
+      "name": "RedeemRequest",
+      "discriminator": [
+        103,
+        82,
+        139,
+        51,
+        199,
+        234,
+        111,
+        115
+      ]
+    },
+    {
+      "name": "StakePosition",
+      "discriminator": [
+        78,
+        165,
+        30,
+        111,
+        171,
+        125,
+        11,
+        220
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AuthorityTransferProposed",
+      "discriminator": [
+        103,
+        244,
+        27,
+        116,
+        177,
+        4,
+        100,
+        119
+      ]
+    },
+    {
+      "name": "AuthorityTransferred",
+      "discriminator": [
+        245,
+        109,
+        179,
+        54,
+        135,
+        92,
+        22,
+        64
+      ]
+    },
+    {
+      "name": "BufferDeposited",
+      "discriminator": [
+        245,
+        11,
+        66,
+        251,
+        235,
+        96,
+        90,
+        2
+      ]
+    },
+    {
+      "name": "BufferWithdrawn",
+      "discriminator": [
+        75,
+        118,
+        177,
+        214,
+        183,
+        17,
+        158,
+        228
+      ]
+    },
+    {
+      "name": "FundingClaimed",
+      "discriminator": [
+        229,
+        92,
+        169,
+        151,
+        123,
+        83,
+        224,
+        189
+      ]
+    },
+    {
+      "name": "FundingSettled",
+      "discriminator": [
+        250,
+        241,
+        161,
+        50,
+        159,
+        70,
+        172,
+        196
+      ]
+    },
+    {
+      "name": "GuardianChanged",
+      "discriminator": [
+        152,
+        239,
+        217,
+        24,
+        162,
+        189,
+        236,
+        143
+      ]
+    },
+    {
+      "name": "KeeperBonded",
+      "discriminator": [
+        253,
+        175,
+        66,
+        79,
+        226,
+        84,
+        206,
+        204
+      ]
+    },
+    {
+      "name": "KeeperRegistered",
+      "discriminator": [
+        92,
+        176,
+        91,
+        165,
+        217,
+        103,
+        54,
+        208
+      ]
+    },
+    {
+      "name": "KeeperSlashed",
+      "discriminator": [
+        40,
+        75,
+        247,
+        92,
+        165,
+        86,
+        81,
+        28
+      ]
+    },
+    {
+      "name": "KeeperUnbonded",
+      "discriminator": [
+        51,
+        104,
+        178,
+        109,
+        195,
+        218,
+        72,
+        209
+      ]
+    },
+    {
+      "name": "MintCancelled",
+      "discriminator": [
+        241,
+        184,
+        143,
+        179,
+        67,
+        236,
+        97,
+        19
+      ]
+    },
+    {
+      "name": "MintConfirmed",
+      "discriminator": [
+        199,
+        159,
+        125,
+        247,
+        72,
+        13,
+        4,
+        1
+      ]
+    },
+    {
+      "name": "MintRequested",
+      "discriminator": [
+        35,
+        69,
+        51,
+        130,
+        53,
+        43,
+        189,
+        196
+      ]
+    },
+    {
+      "name": "OracleUpdated",
+      "discriminator": [
+        138,
+        9,
+        51,
+        219,
+        228,
+        198,
+        11,
+        147
+      ]
+    },
+    {
+      "name": "ParamsUpdated",
+      "discriminator": [
+        2,
+        163,
+        138,
+        99,
+        135,
+        11,
+        136,
+        169
+      ]
+    },
+    {
+      "name": "PauseChanged",
+      "discriminator": [
+        238,
+        188,
+        213,
+        78,
+        134,
+        209,
+        178,
+        218
+      ]
+    },
+    {
+      "name": "ProtocolInitialized",
+      "discriminator": [
+        173,
+        122,
+        168,
+        254,
+        9,
+        118,
+        76,
+        132
+      ]
+    },
+    {
+      "name": "RebalanceProofCommitted",
+      "discriminator": [
+        239,
+        42,
+        47,
+        44,
+        36,
+        21,
+        171,
+        10
+      ]
+    },
+    {
+      "name": "RedeemCancelled",
+      "discriminator": [
+        209,
+        166,
+        7,
+        223,
+        49,
+        25,
+        200,
+        82
+      ]
+    },
+    {
+      "name": "RedeemConfirmed",
+      "discriminator": [
+        48,
+        53,
+        239,
+        254,
+        112,
+        179,
+        33,
+        99
+      ]
+    },
+    {
+      "name": "RedeemRequested",
+      "discriminator": [
+        5,
+        130,
+        67,
+        249,
+        243,
+        168,
+        11,
+        88
+      ]
+    },
+    {
+      "name": "Staked",
+      "discriminator": [
+        11,
+        146,
+        45,
+        205,
+        230,
+        58,
+        213,
+        240
+      ]
+    },
+    {
+      "name": "UnstakeRequested",
+      "discriminator": [
+        21,
+        253,
+        177,
+        85,
+        129,
+        206,
+        42,
+        152
+      ]
+    },
+    {
+      "name": "Unstaked",
+      "discriminator": [
+        27,
+        179,
+        156,
+        215,
+        47,
+        71,
+        195,
+        7
+      ]
+    },
+    {
+      "name": "VaultGroupInitialized",
+      "discriminator": [
+        76,
+        188,
+        233,
+        87,
+        55,
+        202,
+        221,
+        202
+      ]
+    },
+    {
+      "name": "VenueStateReported",
+      "discriminator": [
+        106,
+        52,
+        95,
+        22,
+        138,
+        114,
+        78,
+        201
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Signer is not the protocol authority."
+    },
+    {
+      "code": 6001,
+      "name": "NoPendingAuthority",
+      "msg": "No authority transfer is pending."
+    },
+    {
+      "code": 6002,
+      "name": "NotPendingAuthority",
+      "msg": "Signer is not the pending authority."
+    },
+    {
+      "code": 6003,
+      "name": "GuardianCannotUnpause",
+      "msg": "The guardian may pause but never unpause."
+    },
+    {
+      "code": 6004,
+      "name": "MintPaused",
+      "msg": "Minting is paused."
+    },
+    {
+      "code": 6005,
+      "name": "RedeemPaused",
+      "msg": "Redemption is paused."
+    },
+    {
+      "code": 6006,
+      "name": "VaultsNotReady",
+      "msg": "Protocol vaults are not fully initialized yet."
+    },
+    {
+      "code": 6007,
+      "name": "VaultAlreadyInitialized",
+      "msg": "Vault has already been initialized."
+    },
+    {
+      "code": 6008,
+      "name": "InvalidBps",
+      "msg": "Basis-point parameter exceeds 10000."
+    },
+    {
+      "code": 6009,
+      "name": "InvalidCollateralRatio",
+      "msg": "Collateral ratio must be at least 10000 bps (1.00x)."
+    },
+    {
+      "code": 6010,
+      "name": "InvalidDeltaThreshold",
+      "msg": "Delta band must be 1..=2000 bps and the exit target must sit inside it."
+    },
+    {
+      "code": 6011,
+      "name": "InvalidPriceAge",
+      "msg": "Oracle staleness bound must be between 1 and 3600 seconds."
+    },
+    {
+      "code": 6012,
+      "name": "InvalidDecimals",
+      "msg": "Mint decimals are out of the supported range."
+    },
+    {
+      "code": 6013,
+      "name": "InvalidMintAuthority",
+      "msg": "Synthetic mint authority must be the protocol config PDA."
+    },
+    {
+      "code": 6014,
+      "name": "FreezeAuthoritySet",
+      "msg": "Synthetic mint must not carry a freeze authority."
+    },
+    {
+      "code": 6015,
+      "name": "TokenProgramMismatch",
+      "msg": "All protocol mints must belong to the same token program."
+    },
+    {
+      "code": 6016,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero."
+    },
+    {
+      "code": 6017,
+      "name": "LimitExceeded",
+      "msg": "Requested amount exceeds the configured limit."
+    },
+    {
+      "code": 6018,
+      "name": "OracleAccountMismatch",
+      "msg": "Oracle account does not match the configured price feed account."
+    },
+    {
+      "code": 6019,
+      "name": "OracleOwnerMismatch",
+      "msg": "Oracle account is not owned by the Pyth receiver program."
+    },
+    {
+      "code": 6020,
+      "name": "OracleDiscriminatorMismatch",
+      "msg": "Oracle account discriminator is not PriceUpdateV2."
+    },
+    {
+      "code": 6021,
+      "name": "OracleDeserializeFailed",
+      "msg": "Oracle account data could not be deserialized."
+    },
+    {
+      "code": 6022,
+      "name": "OracleNotFullyVerified",
+      "msg": "Oracle price update is not fully verified."
+    },
+    {
+      "code": 6023,
+      "name": "OracleFeedMismatch",
+      "msg": "Oracle feed id does not match the configured feed id."
+    },
+    {
+      "code": 6024,
+      "name": "OracleInvalidPrice",
+      "msg": "Oracle price is zero or negative."
+    },
+    {
+      "code": 6025,
+      "name": "OraclePriceStale",
+      "msg": "Oracle price is older than the configured staleness bound."
+    },
+    {
+      "code": 6026,
+      "name": "OraclePriceFromFuture",
+      "msg": "Oracle publish time is in the future."
+    },
+    {
+      "code": 6027,
+      "name": "OracleConfidenceTooWide",
+      "msg": "Oracle confidence interval is wider than the configured bound."
+    },
+    {
+      "code": 6028,
+      "name": "VenueNotEnabled",
+      "msg": "Venue id is not a real, enabled hedge venue."
+    },
+    {
+      "code": 6029,
+      "name": "VenueStateMissing",
+      "msg": "No venue state has been reported yet."
+    },
+    {
+      "code": 6030,
+      "name": "VenueStateStale",
+      "msg": "Reported venue state is older than the configured bound."
+    },
+    {
+      "code": 6031,
+      "name": "VenueStateFromFuture",
+      "msg": "Reported venue state is timestamped in the future."
+    },
+    {
+      "code": 6032,
+      "name": "CarryOutOfRange",
+      "msg": "Reported net carry is outside the representable range."
+    },
+    {
+      "code": 6033,
+      "name": "CarryBelowFloor",
+      "msg": "Net carry is below the issuance floor; minting is refused."
+    },
+    {
+      "code": 6034,
+      "name": "VenueCapacityExceeded",
+      "msg": "Outstanding supply would exceed the hedgeable venue capacity."
+    },
+    {
+      "code": 6035,
+      "name": "DeltaOutsideHardBand",
+      "msg": "Book delta is outside the hard band; minting is refused."
+    },
+    {
+      "code": 6036,
+      "name": "InsufficientBond",
+      "msg": "Keeper bond is below the protocol minimum."
+    },
+    {
+      "code": 6037,
+      "name": "KeeperInactive",
+      "msg": "Keeper is not active."
+    },
+    {
+      "code": 6038,
+      "name": "KeeperMismatch",
+      "msg": "Keeper account does not belong to this protocol config."
+    },
+    {
+      "code": 6039,
+      "name": "SlashExceedsBond",
+      "msg": "Slash amount exceeds the keeper bond."
+    },
+    {
+      "code": 6040,
+      "name": "UnknownSlashReason",
+      "msg": "Slash reason code is not one of the enumerated faults."
+    },
+    {
+      "code": 6041,
+      "name": "UnbondCooldownActive",
+      "msg": "Unbond cooldown since the last committed proof has not elapsed."
+    },
+    {
+      "code": 6042,
+      "name": "BondBelowMinimum",
+      "msg": "Withdrawal would drop the bond below the protocol minimum without a full exit."
+    },
+    {
+      "code": 6043,
+      "name": "ProofSequenceMismatch",
+      "msg": "Proof sequence does not match the protocol rebalance counter."
+    },
+    {
+      "code": 6044,
+      "name": "ProofSlotNotMonotonic",
+      "msg": "Proof slot is not strictly greater than the last committed proof slot."
+    },
+    {
+      "code": 6045,
+      "name": "EmptyProofHash",
+      "msg": "Proof hash is empty."
+    },
+    {
+      "code": 6046,
+      "name": "DeltaThresholdExceeded",
+      "msg": "Post-rebalance delta deviation is outside the inner exit target."
+    },
+    {
+      "code": 6047,
+      "name": "DeltaOutOfRange",
+      "msg": "Reported delta deviation is outside the representable range."
+    },
+    {
+      "code": 6048,
+      "name": "ProofCollateralMismatch",
+      "msg": "Reported collateral notional disagrees with the on-chain valuation."
+    },
+    {
+      "code": 6049,
+      "name": "ProofDeltaMismatch",
+      "msg": "Reported post-rebalance delta disagrees with the on-chain valuation."
+    },
+    {
+      "code": 6050,
+      "name": "RequestExpired",
+      "msg": "Request has expired."
+    },
+    {
+      "code": 6051,
+      "name": "RequestNotExpired",
+      "msg": "Request has not expired yet; only the assigned keeper may act."
+    },
+    {
+      "code": 6052,
+      "name": "SettlementDelayActive",
+      "msg": "Settlement delay since the request has not elapsed."
+    },
+    {
+      "code": 6053,
+      "name": "HedgeFillTooSmall",
+      "msg": "Hedge fill is smaller than the required notional after slippage."
+    },
+    {
+      "code": 6054,
+      "name": "HedgeFillTooLarge",
+      "msg": "Hedge fill is larger than the notional being issued against."
+    },
+    {
+      "code": 6055,
+      "name": "SlippageExceeded",
+      "msg": "Resulting synthetic amount is below the caller's minimum."
+    },
+    {
+      "code": 6056,
+      "name": "RedeemExceedsSupply",
+      "msg": "Redeem amount exceeds the outstanding synthetic supply."
+    },
+    {
+      "code": 6057,
+      "name": "RedeemExceedsCollateral",
+      "msg": "Redeem would release more collateral than the protocol holds."
+    },
+    {
+      "code": 6058,
+      "name": "SupplyCapExceeded",
+      "msg": "Synthetic supply cap would be exceeded."
+    },
+    {
+      "code": 6059,
+      "name": "NoStakers",
+      "msg": "Nothing is staked, so funding cannot be distributed to stakers."
+    },
+    {
+      "code": 6060,
+      "name": "InsufficientStake",
+      "msg": "Staked balance is smaller than the requested amount."
+    },
+    {
+      "code": 6061,
+      "name": "NothingToClaim",
+      "msg": "There is nothing to claim."
+    },
+    {
+      "code": 6062,
+      "name": "UnstakeCooldownActive",
+      "msg": "Unstake cooldown has not elapsed."
+    },
+    {
+      "code": 6063,
+      "name": "NoPendingUnstake",
+      "msg": "There is no pending unstake to withdraw."
+    },
+    {
+      "code": 6064,
+      "name": "InsufficientBuffer",
+      "msg": "Insurance buffer balance is smaller than the requested amount."
+    },
+    {
+      "code": 6065,
+      "name": "BufferLocked",
+      "msg": "Insurance buffer is locked: funding is not in a sustained negative regime."
+    },
+    {
+      "code": 6066,
+      "name": "BufferDrawCapExceeded",
+      "msg": "Withdrawal exceeds the per-call insurance buffer draw cap."
+    },
+    {
+      "code": 6067,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow."
+    }
+  ],
+  "types": [
+    {
+      "name": "AuthorityTransferProposed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "current_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "pending_authority",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuthorityTransferred",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "previous_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_authority",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BufferDeposited",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "depositor",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "buffer_balance",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BufferWithdrawn",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "buffer_balance",
+            "type": "u64"
+          },
+          {
+            "name": "acc_funding_per_share",
+            "type": "u128"
+          },
+          {
+            "name": "negative_funding_since",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "docs": [
+        "Global protocol configuration and accounting. Singleton, PDA `[\"config\"]`.",
+        "",
+        "`authority` is expected to be a multisig or a timelock program address, not",
+        "a hot key. Nothing here assumes the authority is an individual signer: every",
+        "admin instruction is a single `Signer` check, which a Squads multisig or a",
+        "timelock executor satisfies transparently.",
+        "",
+        "`guardian` is the separate fast-pause key from `docs/security.md` 3. It can",
+        "only *stop* actions -- never unpause, never move funds, never change a",
+        "parameter -- so it can be a smaller, faster multisig without widening the",
+        "blast radius."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "pending_authority",
+            "docs": [
+              "Two-step authority handover. Zero when no handover is pending."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "docs": [
+              "Pause-only key. Cannot unpause and cannot move value."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "synthetic_mint",
+            "docs": [
+              "The synthetic dollar (pUSD). Its mint authority is this config PDA."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bond_mint",
+            "docs": [
+              "$POYZ. Keeper bonds are denominated in it."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "oracle",
+            "docs": [
+              "Pyth `PriceUpdateV2` account for the collateral asset."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "token_program",
+            "docs": [
+              "Token program that owns all three mints. Pinned so one token program",
+              "account is enough for every instruction."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "feed_id",
+            "docs": [
+              "Pyth feed id the oracle account must carry."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "last_proof_hash",
+            "docs": [
+              "Head of the rebalance proof hash chain. Zero before the first proof."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "acc_funding_per_share",
+            "docs": [
+              "Funding-per-staked-unit accumulator, scaled by `math::ACC_SCALE`."
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "total_collateral",
+            "docs": [
+              "Collateral backing outstanding synthetic dollars."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pending_collateral",
+            "docs": [
+              "Collateral escrowed by mint requests that have not been confirmed yet.",
+              "Kept out of `total_collateral` so an unconfirmed request never counts as",
+              "backing."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_synthetic",
+            "docs": [
+              "Synthetic dollars in circulation."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "pending_redeem_synthetic",
+            "docs": [
+              "Synthetic dollars escrowed by redeem requests awaiting settlement."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "hedged_notional",
+            "docs": [
+              "Short notional last attested by a keeper."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_staked",
+            "docs": [
+              "Staked synthetic earning funding. Excludes amounts in unstake cooldown."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "staker_funding_balance",
+            "docs": [
+              "Synthetic dollars sitting in the funding vault owed to stakers."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "buffer_balance",
+            "docs": [
+              "Synthetic dollars in the insurance buffer."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bonded_total",
+            "docs": [
+              "Sum of live keeper bonds."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "slashed_total",
+            "docs": [
+              "Lifetime slashed bond, moved to the buffer bond vault."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "min_keeper_bond",
+            "type": "u64"
+          },
+          {
+            "name": "max_synthetic_supply",
+            "type": "u64"
+          },
+          {
+            "name": "rebalance_count",
+            "docs": [
+              "Monotonic rebalance counter; doubles as the next proof sequence."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_proof_slot",
+            "type": "u64"
+          },
+          {
+            "name": "negative_funding_since",
+            "docs": [
+              "Unix time when funding first turned negative in the current regime.",
+              "Zero when funding is not negative. Gates insurance buffer withdrawals."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "last_settle_at",
+            "type": "i64"
+          },
+          {
+            "name": "venue_state_at",
+            "docs": [
+              "When `report_venue_state` last wrote the carry and capacity numbers.",
+              "Zero means never; minting is blocked until it is set, and blocked again",
+              "once it is older than `max_venue_state_age_sec`."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "venue_capacity_notional",
+            "docs": [
+              "Notional the hedge venue can currently absorb, in synthetic base units,",
+              "as last reported. Caps issuance through `max_supply_vs_capacity_bps`."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "max_price_age_sec",
+            "type": "u32"
+          },
+          {
+            "name": "request_ttl_sec",
+            "type": "u32"
+          },
+          {
+            "name": "min_settlement_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unbond_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "buffer_unlock_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unstake_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "max_venue_state_age_sec",
+            "docs": [
+              "How long a venue-state report stays usable. Beyond it, minting stops."
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "keeper_count",
+            "type": "u32"
+          },
+          {
+            "name": "last_net_carry_bps",
+            "docs": [
+              "Last reported net carry in bps, already net of venue costs and of the",
+              "venue's asymmetric-funding cap. Signed: negative means the protocol pays",
+              "to hold the hedge rather than being paid for it."
+            ],
+            "type": "i32"
+          },
+          {
+            "name": "min_net_carry_bps",
+            "docs": [
+              "Issuance floor. Minting is refused while `last_net_carry_bps` is below",
+              "it. Signed, because a deployment may deliberately accept a small",
+              "negative carry; it may not accept an unbounded one."
+            ],
+            "type": "i32"
+          },
+          {
+            "name": "max_conf_bps",
+            "type": "u16"
+          },
+          {
+            "name": "collateral_ratio_bps",
+            "type": "u16"
+          },
+          {
+            "name": "mint_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "redeem_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_band_bps",
+            "docs": [
+              "Outer band. Beyond this the book must be rebalanced."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "delta_exit_bps",
+            "docs": [
+              "Inner target. A rebalance proof must land the book inside this, not",
+              "merely back inside the outer band -- the hysteresis that stops a keeper",
+              "from parking the book permanently at the edge of tolerance."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "delta_hard_bps",
+            "docs": [
+              "Emergency band. Beyond this the book is too unbalanced to issue against",
+              "at all, and `mint_request` refuses regardless of everything else."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "max_hedge_slippage_bps",
+            "type": "u16"
+          },
+          {
+            "name": "buffer_share_bps",
+            "docs": [
+              "Share of every funding settlement routed to the insurance buffer."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "buffer_max_draw_bps",
+            "docs": [
+              "Per-call cap on insurance buffer withdrawals, as a share of the buffer."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "max_supply_vs_capacity_bps",
+            "docs": [
+              "Ceiling on outstanding supply as a share of reported venue capacity.",
+              "Issuing more synthetic than the venue can absorb means the marginal",
+              "dollar is structurally unhedgeable, whatever the keeper attests."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "collateral_decimals",
+            "type": "u8"
+          },
+          {
+            "name": "synthetic_decimals",
+            "type": "u8"
+          },
+          {
+            "name": "bond_decimals",
+            "type": "u8"
+          },
+          {
+            "name": "mint_paused",
+            "docs": [
+              "Issuance halted. Redemption stays open on purpose: the asymmetry is the",
+              "point of two flags. A stop that also blocks exits is a freeze."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "redeem_paused",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_flags",
+            "docs": [
+              "Bitfield of initialized token vaults; see `VAULT_FLAG_*`."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "venue_flags",
+            "docs": [
+              "Bitfield of enabled hedge venues; bit n enables venue id n."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "last_venue_id",
+            "docs": [
+              "Venue named by the most recent state report. `VENUE_NONE` before any."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                33
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "FundingClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "claimed_total",
+            "type": "u64"
+          },
+          {
+            "name": "staker_funding_balance",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FundingSettled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "to_stakers",
+            "type": "u64"
+          },
+          {
+            "name": "to_buffer",
+            "type": "u64"
+          },
+          {
+            "name": "net_carry_bps",
+            "docs": [
+              "Carry regime in force at settlement, as last reported by",
+              "`report_venue_state`. Carried in the event so an indexer can attribute a",
+              "settlement to a regime without a second lookup."
+            ],
+            "type": "i32"
+          },
+          {
+            "name": "acc_funding_per_share",
+            "type": "u128"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          },
+          {
+            "name": "negative_funding_since",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GuardianChanged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "previous_guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitializeParams",
+      "docs": [
+        "Everything `initialize` needs beyond the accounts. Grouped into one struct",
+        "so the instruction keeps a readable signature and the IDL exposes named",
+        "fields rather than a positional argument list."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feed_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "guardian",
+            "docs": [
+              "Pause-only key (`docs/security.md` 3). May equal the authority if a",
+              "deployment chooses not to run a separate guardian."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "max_price_age_sec",
+            "type": "u32"
+          },
+          {
+            "name": "max_conf_bps",
+            "type": "u16"
+          },
+          {
+            "name": "collateral_ratio_bps",
+            "type": "u16"
+          },
+          {
+            "name": "mint_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "redeem_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_band_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_exit_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_hard_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_hedge_slippage_bps",
+            "type": "u16"
+          },
+          {
+            "name": "buffer_share_bps",
+            "type": "u16"
+          },
+          {
+            "name": "buffer_max_draw_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_supply_vs_capacity_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_keeper_bond",
+            "type": "u64"
+          },
+          {
+            "name": "max_synthetic_supply",
+            "type": "u64"
+          },
+          {
+            "name": "request_ttl_sec",
+            "type": "u32"
+          },
+          {
+            "name": "min_settlement_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unbond_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "buffer_unlock_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unstake_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "max_venue_state_age_sec",
+            "type": "u32"
+          },
+          {
+            "name": "min_net_carry_bps",
+            "docs": [
+              "Issuance floor on net carry, in bps. Signed."
+            ],
+            "type": "i32"
+          },
+          {
+            "name": "venue_flags",
+            "docs": [
+              "Bitmask of enabled hedge venues; bit n enables venue id n."
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Keeper",
+      "docs": [
+        "A Delta Keeper's registration and bond. PDA `[\"keeper\", keeper]`."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "bonded",
+            "type": "u64"
+          },
+          {
+            "name": "slashed",
+            "type": "u64"
+          },
+          {
+            "name": "proofs_committed",
+            "type": "u64"
+          },
+          {
+            "name": "registered_at",
+            "type": "i64"
+          },
+          {
+            "name": "last_proof_at",
+            "type": "i64"
+          },
+          {
+            "name": "last_proof_slot",
+            "type": "u64"
+          },
+          {
+            "name": "last_bond_at",
+            "type": "i64"
+          },
+          {
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                14
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "KeeperBonded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "added",
+            "type": "u64"
+          },
+          {
+            "name": "bonded",
+            "type": "u64"
+          },
+          {
+            "name": "active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "KeeperRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "bonded",
+            "type": "u64"
+          },
+          {
+            "name": "keeper_count",
+            "type": "u32"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "KeeperSlashed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "slashed",
+            "type": "u64"
+          },
+          {
+            "name": "bonded",
+            "type": "u64"
+          },
+          {
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "name": "reason_code",
+            "type": "u8"
+          },
+          {
+            "name": "evidence_hash",
+            "docs": [
+              "Hash of the off-chain evidence bundle that justified the slash."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "KeeperUnbonded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "withdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "bonded",
+            "type": "u64"
+          },
+          {
+            "name": "active",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintCancelled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_returned",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintConfirmed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_amount",
+            "type": "u64"
+          },
+          {
+            "name": "effective_notional",
+            "type": "u64"
+          },
+          {
+            "name": "synthetic_minted",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "filled_notional",
+            "type": "u64"
+          },
+          {
+            "name": "venue_id",
+            "type": "u8"
+          },
+          {
+            "name": "hedge_proof_hash",
+            "docs": [
+              "Hash of the hedge execution payload proving the offsetting short was",
+              "opened before these synthetic dollars existed."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "total_synthetic",
+            "type": "u64"
+          },
+          {
+            "name": "total_collateral",
+            "type": "u64"
+          },
+          {
+            "name": "hedged_notional",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintRequest",
+      "docs": [
+        "A two-phase mint in flight. PDA `[\"mint_request\", user, nonce_le]`.",
+        "",
+        "The account existing *is* the pending state; there is no status enum to get",
+        "out of sync. It is closed on confirm and on cancel, refunding rent to the",
+        "user either way."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_amount",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_notional",
+            "docs": [
+              "Notional at the request-time price. The confirm path takes the minimum",
+              "of this and the confirm-time notional."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "min_synthetic_out",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_price",
+            "type": "i64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "deadline",
+            "docs": [
+              "After this time the keeper loses its exclusive window and the user can",
+              "cancel and reclaim the collateral."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "quoted_slot",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_expo",
+            "type": "i32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                11
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MintRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "request",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_amount",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_notional",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_price",
+            "type": "i64"
+          },
+          {
+            "name": "quoted_expo",
+            "type": "i32"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OracleUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "previous_oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "feed_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParamsUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "max_price_age_sec",
+            "type": "u32"
+          },
+          {
+            "name": "max_conf_bps",
+            "type": "u16"
+          },
+          {
+            "name": "collateral_ratio_bps",
+            "type": "u16"
+          },
+          {
+            "name": "mint_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "redeem_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_band_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_exit_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_hard_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_hedge_slippage_bps",
+            "type": "u16"
+          },
+          {
+            "name": "buffer_share_bps",
+            "type": "u16"
+          },
+          {
+            "name": "buffer_max_draw_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_keeper_bond",
+            "type": "u64"
+          },
+          {
+            "name": "max_synthetic_supply",
+            "type": "u64"
+          },
+          {
+            "name": "request_ttl_sec",
+            "type": "u32"
+          },
+          {
+            "name": "min_settlement_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unbond_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "buffer_unlock_delay_sec",
+            "type": "u32"
+          },
+          {
+            "name": "unstake_cooldown_sec",
+            "type": "u32"
+          },
+          {
+            "name": "max_supply_vs_capacity_bps",
+            "type": "u16"
+          },
+          {
+            "name": "max_venue_state_age_sec",
+            "type": "u32"
+          },
+          {
+            "name": "min_net_carry_bps",
+            "type": "i32"
+          },
+          {
+            "name": "venue_flags",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PauseChanged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "signer",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint_paused",
+            "type": "bool"
+          },
+          {
+            "name": "redeem_paused",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProtocolInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "collateral_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "synthetic_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "bond_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "feed_id",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "collateral_ratio_bps",
+            "type": "u16"
+          },
+          {
+            "name": "delta_band_bps",
+            "type": "u16"
+          },
+          {
+            "name": "min_keeper_bond",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RebalanceProof",
+      "docs": [
+        "Immutable record of one rebalance. PDA `[\"proof\", sequence_le]`.",
+        "",
+        "What the hashes commit to, and what that buys an observer, is documented on",
+        "`instructions::proof::commit_rebalance_proof`."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "venues_hash",
+            "docs": [
+              "Keeper-supplied digest of the per-venue execution payload."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "prev_hash",
+            "docs": [
+              "Chain head before this proof."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "this_hash",
+            "docs": [
+              "Chain head after it. Computed by the program, never supplied."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "sequence",
+            "type": "u64"
+          },
+          {
+            "name": "hedged_notional",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_notional",
+            "type": "u64"
+          },
+          {
+            "name": "oracle_publish_time",
+            "type": "i64"
+          },
+          {
+            "name": "oracle_posted_slot",
+            "type": "u64"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "oracle_price",
+            "type": "i64"
+          },
+          {
+            "name": "oracle_conf",
+            "type": "u64"
+          },
+          {
+            "name": "delta_bps_before",
+            "type": "i32"
+          },
+          {
+            "name": "delta_bps_after",
+            "type": "i32"
+          },
+          {
+            "name": "oracle_expo",
+            "type": "i32"
+          },
+          {
+            "name": "venue_id",
+            "docs": [
+              "Hedge venue identifier. See `packages/hedge-router` for the mapping."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                18
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RebalanceProofCommitted",
+      "docs": [
+        "`collateral_notional` and `delta_bps_after` here are the program's own",
+        "recomputation, not the keeper's claim. `hedged_notional` is the keeper's",
+        "attestation -- the program cannot see the venue."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "proof",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "sequence",
+            "type": "u64"
+          },
+          {
+            "name": "venues_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "prev_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "this_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "venue_id",
+            "type": "u8"
+          },
+          {
+            "name": "delta_bps_before",
+            "type": "i32"
+          },
+          {
+            "name": "delta_bps_after",
+            "type": "i32"
+          },
+          {
+            "name": "hedged_notional",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_notional",
+            "type": "u64"
+          },
+          {
+            "name": "oracle_price",
+            "type": "i64"
+          },
+          {
+            "name": "oracle_conf",
+            "type": "u64"
+          },
+          {
+            "name": "oracle_expo",
+            "type": "i32"
+          },
+          {
+            "name": "oracle_publish_time",
+            "type": "i64"
+          },
+          {
+            "name": "oracle_posted_slot",
+            "type": "u64"
+          },
+          {
+            "name": "slot",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedeemCancelled",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "synthetic_returned",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedeemConfirmed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "keeper",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "synthetic_burned",
+            "type": "u64"
+          },
+          {
+            "name": "collateral_returned",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "unwound_notional",
+            "type": "u64"
+          },
+          {
+            "name": "venue_id",
+            "type": "u8"
+          },
+          {
+            "name": "unwind_proof_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "total_synthetic",
+            "type": "u64"
+          },
+          {
+            "name": "total_collateral",
+            "type": "u64"
+          },
+          {
+            "name": "hedged_notional",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedeemRequest",
+      "docs": [
+        "A two-phase redeem in flight. PDA `[\"redeem_request\", user, nonce_le]`."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "synthetic_amount",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_collateral",
+            "docs": [
+              "Collateral at the request-time price. The confirm path takes the",
+              "minimum of this and the confirm-time amount."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "min_collateral_out",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_price",
+            "type": "i64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          },
+          {
+            "name": "quoted_slot",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_expo",
+            "type": "i32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                11
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RedeemRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "request",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "synthetic_amount",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_collateral",
+            "type": "u64"
+          },
+          {
+            "name": "quoted_price",
+            "type": "i64"
+          },
+          {
+            "name": "quoted_expo",
+            "type": "i32"
+          },
+          {
+            "name": "deadline",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StakePosition",
+      "docs": [
+        "A staker's position in the funding vault. PDA `[\"stake\", owner]`.",
+        "",
+        "Classic accumulator accounting: `entitlement = amount * acc / SCALE`, and",
+        "`reward_debt` is the entitlement already accounted for. Any change to",
+        "`amount` must first move the outstanding difference into `unclaimed`,",
+        "otherwise a staker could increase `amount` and retroactively earn funding",
+        "that accrued before they staked.",
+        "",
+        "`pending_unstake` is principal that has left `amount` (and therefore stopped",
+        "earning) but is still inside the cooldown window."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "reward_debt",
+            "type": "u128"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "unclaimed",
+            "type": "u64"
+          },
+          {
+            "name": "claimed_total",
+            "type": "u64"
+          },
+          {
+            "name": "last_update",
+            "type": "i64"
+          },
+          {
+            "name": "cooldown_end",
+            "type": "i64"
+          },
+          {
+            "name": "pending_unstake",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": [
+                "u8",
+                7
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Staked",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "position_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UnstakeRequested",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "position_amount",
+            "type": "u64"
+          },
+          {
+            "name": "pending_unstake",
+            "type": "u64"
+          },
+          {
+            "name": "cooldown_end",
+            "type": "i64"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Unstaked",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "position_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateParams",
+      "docs": [
+        "Partial parameter update. Every field is optional; `None` leaves the current",
+        "value untouched. The whole resulting config is re-validated afterwards, so",
+        "there is no ordering in which a sequence of partial updates reaches an",
+        "invalid state."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "max_price_age_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "max_conf_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "collateral_ratio_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "mint_fee_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "redeem_fee_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "delta_band_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "delta_exit_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "delta_hard_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "max_hedge_slippage_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "buffer_share_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "buffer_max_draw_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "max_supply_vs_capacity_bps",
+            "type": {
+              "option": "u16"
+            }
+          },
+          {
+            "name": "min_keeper_bond",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "max_synthetic_supply",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "request_ttl_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "min_settlement_delay_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "unbond_cooldown_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "buffer_unlock_delay_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "unstake_cooldown_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "max_venue_state_age_sec",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "min_net_carry_bps",
+            "type": {
+              "option": "i32"
+            }
+          },
+          {
+            "name": "venue_flags",
+            "type": {
+              "option": "u8"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultGroupInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "flag",
+            "docs": [
+              "Bit added to `Config::vault_flags` by this instruction."
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "vault_flags",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VenueStateReported",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "config",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "venue_id",
+            "type": "u8"
+          },
+          {
+            "name": "net_carry_bps",
+            "type": "i32"
+          },
+          {
+            "name": "capacity_notional",
+            "type": "u64"
+          },
+          {
+            "name": "negative_funding_since",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}

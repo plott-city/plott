@@ -1,0 +1,42 @@
+# --- key material -------------------------------------------------------
+# Nothing in this list should ever reach this repository in the first place;
+# sync-from-monorepo.sh copies from a whitelist and refuses these paths. The
+# entries stay here so a hand-created file cannot be staged by accident.
+# Match key data formats, not the word. A bare "*keypair*" also excludes
+# legitimate source such as packages/cli/src/keypair.ts, which git then drops
+# from the commit without saying anything.
+*keypair*.json
+*keypair*.bin
+*-deploy.json
+id.json
+keypair/
+*.pem
+*.key
+*.p12
+*.pfx
+
+# --- secrets ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+.npmrc
+
+# --- rust / anchor / solana ---------------------------------------------
+target/
+.anchor/
+test-ledger/
+*.so
+*.rlib
+
+# --- node ---------------------------------------------------------------
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log
+
+# --- editors and os -----------------------------------------------------
+.DS_Store
+.idea/
+.vscode/
+*.swp

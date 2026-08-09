@@ -1,0 +1,31 @@
+{
+  "name": "@poyz/anchor-program",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Poyz on-chain program: mint/redeem, Delta Keeper bond and slash, execution proofs",
+  "license": "MIT",
+  "scripts": {
+    "build": "anchor build",
+    "build:no-idl": "anchor build --no-idl",
+    "fixtures": "node scripts/gen-test-fixtures.js",
+    "idl": "cat target/idl/poyz.json",
+    "idl:publish": "node scripts/copy-idl.js",
+    "test": "npm run fixtures && anchor test",
+    "test:localnet": "npm run fixtures && anchor test --provider.cluster localnet",
+    "test:unit": "cargo test --lib"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.98.0"
+  },
+  "devDependencies": {
+    "@solana/spl-token": "^0.4.13",
+    "@types/bn.js": "^5.1.6",
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.5.0",
+    "mocha": "^10.8.2",
+    "ts-mocha": "^10.1.0",
+    "typescript": "^5.7.3"
+  }
+}

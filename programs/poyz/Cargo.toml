@@ -1,0 +1,35 @@
+[package]
+name = "poyz"
+version = "0.1.0"
+description = "Poyz delta-neutral synthetic dollar: mint/redeem, keeper bond/slash, on-chain execution proofs"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "poyz"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+
+[dependencies]
+# `init-if-needed` is used by exactly one account (the staker's position PDA)
+# so a first-time stake does not need a separate transaction. Every other
+# account in the program uses plain `init`; the feature is kept to a single
+# site because it is the main source of the stack blow-ups recorded in
+# `references/solana/anchor-lessons.md`.
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+# token + token_2022 only. `associated_token` is deliberately left out: every
+# program-owned token account in Poyz is a seeded PDA token account, and user
+# token accounts are validated by explicit mint/authority constraints instead of
+# by ATA derivation. One less dependency in the SBF binary and one less program
+# in every account list.
+anchor-spl = { version = "0.31.1", default-features = false, features = [
+    "token",
+    "token_2022",
+] }

@@ -1,0 +1,67 @@
+name: commit messages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  policy:
+    name: message policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The policy runs over a range of commits, so the shallow default clone
+          # is not enough.
+          fetch-depth: 0
+
+      - name: Work out the range to check
+        id: range
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base='${{ github.event.pull_request.base.sha }}'
+            head='${{ github.event.pull_request.head.sha }}'
+            echo "range=$base..$head" >> "$GITHUB_OUTPUT"
+          else
+            before='${{ github.event.before }}'
+            # A new branch, or the first push to a repository, reports an all-zero
+            # "before". Fall back to the tip commit rather than failing the job.
+            if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ] \
+               || ! git cat-file -e "$before^{commit}" 2>/dev/null; then
+              echo "range=${{ github.sha }} -1" >> "$GITHUB_OUTPUT"
+            else
+              echo "range=$before..${{ github.sha }}" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Check commit messages
+        run: |
+          set -euo pipefail
+          read -r -a args <<< "${{ steps.range.outputs.range }}"
+          if [ "${args[1]:-}" = "-1" ]; then
+            ./scripts/check-commit-messages.sh --message "$(git log -1 --format='%B' "${args[0]}")"
+          else
+            ./scripts/check-commit-messages.sh --range "${args[0]}"
+          fi
+
+      - name: Self-test the policy script
+        # A gate nobody exercises rots. These two calls assert the script still
+        # rejects what it is supposed to reject and accepts what it should accept.
+        run: |
+          set -euo pipefail
+
+          if ./scripts/check-commit-messages.sh \
+               --message "feat: add hedge router" \
+               --message "fix(core): off-by-one" >/dev/null 2>&1; then
+            echo "self-test FAILED: colon prefixes were accepted"
+            exit 1
+          fi
+          echo "self-test: colon prefixes rejected as expected"
+
+          ./scripts/check-commit-messages.sh \
+            --message "add error handling for edge cases" \
+            --message "document the public API surface" >/dev/null
+          echo "self-test: plain sentences accepted as expected"

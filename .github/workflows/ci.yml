@@ -1,0 +1,164 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rustfmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          # Never pin a version here. Pinned toolchains break within weeks as
+          # crates raise their minimum supported Rust version.
+          toolchain: stable
+          components: rustfmt
+      - name: cargo fmt --check
+        # rustfmt parses the source and resolves no dependencies, so this stays
+        # green without a Solana toolchain on the runner.
+        run: cargo fmt --all --check
+
+  test:
+    name: cargo test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo check
+        # Cargo.lock is committed, so the dependency graph here is the one that was
+        # verified locally rather than whatever resolves on the day.
+        run: cargo check --all-targets
+      - name: cargo test
+        # Unit tests only. They cover the fixed-point arithmetic, account sizing and
+        # state invariants, and need no validator.
+        run: cargo test
+
+  hygiene:
+    name: hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: No credentials in the tree
+        run: |
+          set -uo pipefail
+          # This file is excluded because it spells the shapes out in order to find them.
+          pattern='ghp_[A-Za-z0-9]{20}|github_pat_[A-Za-z0-9_]{20}|sk-ant-[A-Za-z0-9-]{20}'
+          pattern="$pattern"'|vcp_[A-Za-z0-9]{20}|npm_[A-Za-z0-9]{20}|api-key=[A-Za-z0-9._-]{8}'
+          pattern="$pattern"'|BEGIN [A-Z ]*PRIVATE KEY'
+          pattern="$pattern"'|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
+          hits=$(grep -rEn "$pattern" . --exclude-dir=.git --exclude=ci.yml || true)
+          if [ -n "$hits" ]; then echo "$hits"; exit 1; fi
+          echo "no credential-shaped strings"
+
+      - name: No signing keys in the tree
+        # Match key data, not the word "keypair". packages/cli/src/keypair.ts is
+        # key-handling source and belongs here. Names alone are not enough either,
+        # so small JSON files are read and rejected when they look like a Solana
+        # secret key array -- which catches a key renamed to something innocent.
+        run: |
+          set -euo pipefail
+          python3 - <<'PYKEY'
+          import json, os, re, sys
+          NAME = re.compile(r'(keypair.*\.(json|bin|key)$|-deploy\.json$|^id\.json$'
+                            r'|\.pem$|\.key$|^\.env$|^\.env\.(?!example)[^/]*$)')
+          def secret_key_array(path):
+              try:
+                  if os.path.getsize(path) > 8192:
+                      return False
+                  with open(path) as fh:
+                      data = json.load(fh)
+              except Exception:
+                  return False
+              return (isinstance(data, list) and len(data) >= 32
+                      and all(isinstance(x, int) and 0 <= x <= 255 for x in data))
+          hits = []
+          for dirpath, dirnames, filenames in os.walk("."):
+              dirnames[:] = [d for d in dirnames
+                             if d not in (".git", "node_modules", "target")]
+              for name in filenames:
+                  full = os.path.join(dirpath, name)
+                  if NAME.search(name):
+                      hits.append(f"{full}  (name)")
+                  elif name.endswith(".json") and secret_key_array(full):
+                      hits.append(f"{full}  (content looks like a secret key array)")
+          if hits:
+              print("\n".join(hits))
+              sys.exit(1)
+          print("no key material")
+          PYKEY
+
+      - name: No emoji
+        run: |
+          set -uo pipefail
+          hits=$(grep -rnP '[\x{1F000}-\x{1FAFF}\x{2600}-\x{27BF}\x{FE0F}\x{2705}\x{274C}\x{2714}\x{2716}\x{2B50}]' . \
+                   --exclude-dir=.git --include='*.md' --include='*.rs' --include='*.ts' \
+                   --include='*.yml' --include='*.sh' --include='*.toml' || true)
+          if [ -n "$hits" ]; then echo "$hits"; exit 1; fi
+          echo "no emoji"
+
+  shell:
+    name: shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check
+        run: |
+          set -euo pipefail
+          found=0
+          while IFS= read -r f; do
+            bash -n "$f"
+            echo "ok  $f"
+            found=$((found + 1))
+          done < <(find . -name '*.sh' -not -path './.git/*')
+          [ "$found" -gt 0 ] || { echo "no shell scripts found"; exit 1; }
+
+  idl:
+    name: idl
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: IDL is valid and matches the program
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, re, sys
+
+          with open("idl/poyz.json") as fh:
+              idl = json.load(fh)
+          meta = idl.get("metadata", {})
+          if meta.get("name") != "poyz":
+              print(f"unexpected program name in IDL: {meta.get('name')!r}")
+              sys.exit(1)
+
+          declared = {i["name"] for i in idl.get("instructions", [])}
+          if not declared:
+              print("IDL declares no instructions")
+              sys.exit(1)
+
+          # Every IDL instruction must exist as a handler in lib.rs, and vice versa.
+          source = open("programs/poyz/src/lib.rs").read()
+          in_source = set(re.findall(r'\n    pub fn ([a-z][a-z0-9_]*)\b', source))
+
+          missing = sorted(declared - in_source)
+          extra = sorted(in_source - declared)
+          if missing or extra:
+              if missing:
+                  print(f"in IDL but not in lib.rs: {missing}")
+              if extra:
+                  print(f"in lib.rs but not in IDL: {extra}")
+              print("regenerate the IDL with: anchor build")
+              sys.exit(1)
+
+          print(f"IDL ok: {meta.get('name')} {meta.get('version')}, "
+                f"{len(declared)} instructions, all matched in lib.rs")
+          PY

@@ -107,8 +107,9 @@ instructions require the admin signer; fund-withdrawal paths are PDA-signed and 
 
 ### 2.1-2.2 What the bond covers and sizing
 Since the keeper cannot withdraw, the bond covers the **max value extractable before detection-and-
-replacement** (adversarial trading, 1.1), not custody. With per-epoch bleed cap
-`max_epoch_bleed_bps`, hedge notional `N`, detection window `d` epochs (hourly proofs, so small):
+replacement** (adversarial trading, 1.1), not custody. With a proposed per-epoch bleed cap
+`max_epoch_bleed_bps` -- a sizing parameter for this analysis, not a field the program
+carries today -- hedge notional `N`, detection window `d` epochs (hourly proofs, so small):
 
 ```
 V_drain ~= d * (max_epoch_bleed_bps/10000) * N ;   bond >= k * V_drain   (k >= 2)
@@ -138,7 +139,7 @@ that re-verifies on-chain evidence rather than trusting the caller.
 | Program upgrade | multisig (m-of-n) + timelock | delayed, disclosed, durable-nonce-hardened (1.1a) | biggest centralization risk; sunset plan below |
 | Admin (risk params) | multisig | timelocked for band/cap/fee/`carry_floor` changes | cannot move funds |
 | Guardian (pause) | smaller multisig / key | fast pause, slow unpause | can only stop actions, never move funds; the timelock tripwire's responder |
-| Keeper (delegate/trigger) | rotating, bonded | `set_active_keeper` | replaceable; permissionless replacement on proven liveness fault |
+| Keeper (delegate/trigger) | rotating, bonded | `keeper_register` then `keeper_bond`; `keeper_unbond` / `keeper_slash` on the way out | replaceable; the `active` flag on the `Keeper` account follows the bond, so there is no separate activation instruction |
 | Buffer withdraw | admin | timelocked | prevents quiet draining |
 
 Principles: no single key ever moves user funds; timelock on anything that changes risk economics

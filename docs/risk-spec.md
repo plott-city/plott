@@ -74,7 +74,10 @@ measured data, the 1y regime (-35.8%) *just* passes, the 30d (-43.3%) and 24h (-
 differentiator: it does not print when printing does not pay.
 
 ### 1.5 Negative-carry playbook (buffer-level triggers)
-Actions escalate as the buffer drains toward `buffer_target_bps`. Each is a protocol state.
+Actions escalate as the buffer drains toward the buffer target. Each is a protocol state.
+The target is an off-chain policy parameter (`bufferTargetBps` in `@poyz/risk-buffer`); the
+program itself stores only the inflow share `buffer_share_bps` and the per-call withdrawal
+cap `buffer_max_draw_bps`, and holds no target of its own.
 
 | buffer vs target | actions |
 |---|---|
